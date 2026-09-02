@@ -66,32 +66,34 @@ function formatDeviceLabel(category, model) {
 
 /**
  * Dibuja la lista de modelos agrupada por generación/línea (ej: "iPhone 16"
- * con sus 5 variantes adentro), en vez de una lista plana larga. Cada grupo
- * es un acordeón: se abre el grupo al que pertenece el modelo activo.
+ * con sus 5 variantes adentro), en vez de una lista plana larga. Los grupos
+ * son botones redondeados en fila (como los de modelo); al tocar uno se
+ * despliega debajo una sola fila con los modelos de esa línea, también como
+ * botones redondeados.
  * El llamador es responsable de conectar los listeners de [data-group-index]
  * y [data-model] sobre el contenedor donde se inyecta este HTML.
  */
 function renderModelGroups(category, activeModel, openIndex) {
   const groups = MODEL_GROUPS[category] || [];
-  const groupsHtml = groups
+  const rowHtml = groups
     .map((g, i) => {
       const isOpen = i === openIndex;
       const hasActive = g.models.includes(activeModel);
-      return `
-        <div class="model-group">
-          <button class="model-group__header${hasActive ? " has-active" : ""}" data-group-index="${i}">
-            <span class="model-group__label">${escapeHtml(g.label)}</span>
-            <span class="model-group__count">${g.models.length} modelo${g.models.length === 1 ? "" : "s"}</span>
-            <span class="model-group__arrow${isOpen ? " is-open" : ""}">▾</span>
-          </button>
-          <div class="model-group__models" ${isOpen ? "" : "hidden"}>
-            ${g.models.map((m) => `<button class="model-tab${m === activeModel ? " is-active" : ""}" data-model="${escapeHtml(m)}">${escapeHtml(m)}</button>`).join("")}
-          </div>
-        </div>`;
+      return `<button class="model-group__header${hasActive ? " has-active" : ""}" data-group-index="${i}">
+        <span>${escapeHtml(g.label)}</span>
+        <span class="model-group__arrow${isOpen ? " is-open" : ""}">▾</span>
+      </button>`;
     })
     .join("");
+
+  const openGroup = groups[openIndex];
+  const modelsHtml = openGroup
+    ? `<div class="model-group__models">${openGroup.models.map((m) => `<button class="model-tab${m === activeModel ? " is-active" : ""}" data-model="${escapeHtml(m)}">${escapeHtml(m)}</button>`).join("")}</div>`
+    : "";
+
   const otherActive = activeModel === OTHER_MODEL_LABEL;
-  return `<div class="model-groups">${groupsHtml}</div>
+  return `<div class="model-group-row">${rowHtml}</div>
+    ${modelsHtml}
     <button class="model-tab model-tab--other${otherActive ? " is-active" : ""}" data-model="${OTHER_MODEL_LABEL}">${OTHER_MODEL_LABEL}</button>`;
 }
 
