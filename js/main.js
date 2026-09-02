@@ -101,9 +101,10 @@ function findGroupIndex(category, model) {
   return groups.findIndex((g) => g.models.includes(model));
 }
 
-function renderOptionCard(opt) {
+function renderOptionCard(opt, priceAmount) {
   const pros = opt.pros.map((p) => `<li>${escapeHtml(p)}</li>`).join("");
   const cons = opt.cons.map((c) => `<li>${escapeHtml(c)}</li>`).join("");
+  const price = formatPrice(priceAmount);
   return `
     <div class="option-card">
       <h5>${escapeHtml(opt.name)}</h5>
@@ -111,10 +112,23 @@ function renderOptionCard(opt) {
       ${pros ? `<p class="option-card__label option-card__label--pro">Puntos a favor</p><ul class="option-card__list">${pros}</ul>` : ""}
       ${cons ? `<p class="option-card__label option-card__label--con">Puntos en contra</p><ul class="option-card__list">${cons}</ul>` : ""}
       <div class="option-card__meta">
-        <span>Precio: ${opt.price ? opt.price : "Consultar"}</span>
-        <span>Tiempo: ${opt.eta ? opt.eta : "A confirmar"}</span>
+        <span>Precio: ${price ? price : "Consultar"}</span>
+        <span>Tiempo: A confirmar</span>
       </div>
     </div>`;
+}
+
+/**
+ * De las opciones de repuesto definidas para un servicio (ej. pantalla: oled/incell/original),
+ * devuelve solo las que tienen precio cargado para el modelo activo (no todos los modelos
+ * admiten todas las tecnologías). Si todavía no se cargó ningún precio para ese modelo,
+ * se muestran todas igual (con "Consultar") para no dejar la sección vacía.
+ */
+function getAvailableOptions(category, model, serviceId) {
+  const options = IPHONE_REPAIR_OPTIONS[serviceId] || [];
+  const pricedIds = getPricedOptionIds(category, model, serviceId);
+  if (pricedIds.length === 0) return options;
+  return options.filter((o) => pricedIds.includes(o.id));
 }
 
 /* -------------------- Páginas de categoría -------------------- */
@@ -167,9 +181,12 @@ function initCategoryPage(categoryKey) {
       const services = SERVICES.filter((s) => serviceIds.includes(s.id));
       const items = services
         .map((s) => {
-          const options = categoryKey === "iphone" ? IPHONE_REPAIR_OPTIONS[s.id] : null;
-          if (options) {
-            const cards = options.map(renderOptionCard).join("");
+          const hasOptions = categoryKey === "iphone" && IPHONE_REPAIR_OPTIONS[s.id];
+          if (hasOptions) {
+            const options = getAvailableOptions(categoryKey, activeModel, s.id);
+            const cards = options
+              .map((o) => renderOptionCard(o, getOptionPrice(categoryKey, activeModel, s.id, o.id)))
+              .join("");
             return `
               <div class="repair-item repair-item--expandable">
                 <div class="repair-item__icon">${s.icon}</div>
@@ -183,7 +200,7 @@ function initCategoryPage(categoryKey) {
                 </div>
               </div>`;
           }
-          const price = getPrice(categoryKey, activeModel, s.id);
+          const price = formatPrice(getPrice(categoryKey, activeModel, s.id));
           return `
             <div class="repair-item">
               <div class="repair-item__icon">${s.icon}</div>
@@ -382,7 +399,7 @@ function initFinder() {
 
     if (state.step === "option") {
       const service = SERVICES.find((s) => s.id === state.serviceId);
-      const options = IPHONE_REPAIR_OPTIONS[state.serviceId] || [];
+      const options = getAvailableOptions(state.category, state.model, state.serviceId);
       bodyEl.innerHTML = `
         ${backButton()}
         <h3 class="finder__title">¿Qué tipo de ${service.label.toLowerCase()} querés?</h3>
@@ -392,7 +409,7 @@ function initFinder() {
             .map(
               (opt) => `
               <button class="finder__option-card" data-option="${opt.id}">
-                ${renderOptionCard(opt)}
+                ${renderOptionCard(opt, getOptionPrice(state.category, state.model, state.serviceId, opt.id))}
                 <span class="finder__option-card-cta">Elegir esta opción</span>
               </button>`
             )
@@ -454,7 +471,10 @@ function initFinder() {
     const service = SERVICES.find((s) => s.id === state.serviceId);
     const option = state.optionId ? (IPHONE_REPAIR_OPTIONS[state.serviceId] || []).find((o) => o.id === state.optionId) : null;
     const serviceLabel = option ? option.name : service.label;
-    const price = option ? option.price : getPrice(state.category, state.model, state.serviceId);
+    const priceAmount = option
+      ? getOptionPrice(state.category, state.model, state.serviceId, option.id)
+      : getPrice(state.category, state.model, state.serviceId);
+    const price = formatPrice(priceAmount);
     const message = `Hola! Tengo un/a ${deviceLabel}.\nProblema: ${serviceLabel} — ${state.symptom}.\n¿Me pasás precio y tiempo de espera?`;
     bodyEl.innerHTML = `
       <div class="finder__result">

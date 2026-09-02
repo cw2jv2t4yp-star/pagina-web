@@ -31,6 +31,7 @@ const OTHER_MODEL_LABEL = "Otro modelo / no listado";
 
 const MODEL_GROUPS = {
   iphone: [
+    { label: "iPhone 17", models: ["iPhone 17 Pro Max", "iPhone 17 Pro"] },
     { label: "iPhone 16", models: ["iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16", "iPhone 16e"] },
     { label: "iPhone 15", models: ["iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15"] },
     { label: "iPhone 14", models: ["iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14"] },
@@ -38,6 +39,8 @@ const MODEL_GROUPS = {
     { label: "iPhone SE", models: ["iPhone SE (3ª gen., 2022)", "iPhone SE (2ª gen., 2020)"] },
     { label: "iPhone 12", models: ["iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 mini"] },
     { label: "iPhone 11", models: ["iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11"] },
+    { label: "iPhone X", models: ["iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X"] },
+    { label: "iPhone 8", models: ["iPhone 8 Plus", "iPhone 8"] },
   ],
   ipad: [
     { label: "iPad Pro", models: ["iPad Pro 13\" (M4)", "iPad Pro 11\" (M4)", "iPad Pro (2018-2022, otros tamaños)"] },
@@ -92,8 +95,9 @@ const SIMPLE_QUOTE_CATEGORIES = ["ipad", "mac"];
 // Opciones de repuesto para iPhone, con la tecnología, pros y contras de cada una.
 // Por ahora es el único producto con este nivel de detalle: es donde más
 // reparaciones se hacen y donde mejor conocemos las opciones de repuestos.
-// Formato: IPHONE_REPAIR_OPTIONS[idServicio] = [ { id, name, tech, pros[], cons[], price, eta }, ... ]
-// price/eta quedan en null hasta que se cargue el precio y tiempo real por modelo.
+// El precio de cada opción NO va acá: se busca en PRICES según el modelo
+// (una misma opción, ej. "oled", vale distinto según el modelo de iPhone).
+// Formato: IPHONE_REPAIR_OPTIONS[idServicio] = [ { id, name, tech, pros[], cons[] }, ... ]
 const IPHONE_REPAIR_OPTIONS = {
   pantalla: [
     {
@@ -102,8 +106,6 @@ const IPHONE_REPAIR_OPTIONS = {
       tech: "Tecnología OLED: cada píxel genera su propia luz. Es la tecnología de fábrica en los modelos que traen pantalla OLED (por ejemplo, los Pro y varios modelos desde el iPhone X en adelante).",
       pros: ["Negros más profundos y colores más fieles", "Mejor brillo y contraste"],
       cons: ["Más cara que una pantalla Incell/LCD", "Reparación más delicada"],
-      price: null,
-      eta: null,
     },
     {
       id: "incell",
@@ -111,28 +113,13 @@ const IPHONE_REPAIR_OPTIONS = {
       tech: "Tecnología LCD In-Cell: el sensor táctil está integrado en el panel LCD. Es la tecnología de fábrica en modelos con pantalla LCD, como el iPhone 11.",
       pros: ["Más económica", "Buena calidad de imagen para uso diario"],
       cons: ["Colores algo menos intensos que un OLED", "Los negros no son tan profundos"],
-      price: null,
-      eta: null,
-    },
-  ],
-  bateria: [
-    {
-      id: "estandar",
-      name: "Batería estándar",
-      tech: "Batería de reemplazo de capacidad equivalente a la original de fábrica.",
-      pros: ["Buena relación precio / duración", "Instalación rápida"],
-      cons: [],
-      price: null,
-      eta: null,
     },
     {
-      id: "alta-capacidad",
-      name: "Batería de alta capacidad",
-      tech: "Batería de mayor capacidad (mAh) que la original, para más autonomía por carga.",
-      pros: ["Más horas de uso entre cargas"],
-      cons: ["Precio algo mayor"],
-      price: null,
-      eta: null,
+      id: "original",
+      name: "Pantalla original (Apple)",
+      tech: "Repuesto original de Apple (Service Pack): la misma pantalla con la que sale el equipo de fábrica.",
+      pros: ["Calidad idéntica a la de fábrica", "Sin avisos ni límites de funciones (brillo automático, True Tone, etc.)"],
+      cons: ["La opción más cara", "No está disponible para todos los modelos"],
     },
   ],
   "tapa-trasera": [
@@ -142,8 +129,6 @@ const IPHONE_REPAIR_OPTIONS = {
       tech: "Se retira con láser solo el vidrio roto y se coloca uno nuevo, sin cambiar la tapa completa.",
       pros: ["Más económico", "Se mantiene la tapa y las cámaras originales"],
       cons: ["Proceso más delicado", "No siempre es posible según el daño"],
-      price: null,
-      eta: null,
     },
     {
       id: "tapa-completa",
@@ -151,8 +136,6 @@ const IPHONE_REPAIR_OPTIONS = {
       tech: "Se reemplaza toda la tapa trasera, incluyendo el marco.",
       pros: ["Resultado más prolijo si el daño es grande", "También repara golpes en el marco"],
       cons: ["Más caro", "Reparación más larga"],
-      price: null,
-      eta: null,
     },
   ],
 };
@@ -216,12 +199,79 @@ const MODEL_HELP = {
   watch: "En el reloj: Ajustes > General > Información. O desde el iPhone: abrí la app \"Watch\" > General > Información.",
 };
 
-// Precios: completar a futuro con el formato PRICES["iphone"]["iPhone 15 Pro"]["pantalla"] = "$XX.XXX"
-const PRICES = {};
+// Precios en dólares (USD). Todos los montos son números; el formateo
+// ("US$ 50") se hace al mostrarlos, no acá.
+//
+// Dos formas según el servicio:
+//   - Servicios simples (batería, cámara, puerto de carga, botones, diagnóstico):
+//       PRICES["iphone"]["iPhone 13"]["bateria"] = 69
+//   - Servicios con opciones de repuesto (pantalla, vidrio/tapa trasera en iPhone):
+//       PRICES["iphone"]["iPhone 13"]["pantalla"] = { oled: 144 }
+//     Si un modelo no tiene cargada una opción (ej. no tiene "incell"), esa
+//     opción no se ofrece para ese modelo y no aparece en la página.
+const PRICES = {
+  iphone: {
+    "iPhone 8": { "tapa-trasera": { "solo-vidrio": 20 } },
+    "iPhone 8 Plus": { "tapa-trasera": { "solo-vidrio": 20 } },
+    "iPhone SE (2ª gen., 2020)": { "tapa-trasera": { "solo-vidrio": 20 } },
+    "iPhone X": { "tapa-trasera": { "solo-vidrio": 45 } },
+    "iPhone XS": { "tapa-trasera": { "solo-vidrio": 45 } },
+    "iPhone XS Max": { "tapa-trasera": { "solo-vidrio": 45 } },
+    "iPhone XR": { "tapa-trasera": { "solo-vidrio": 45 } },
 
+    "iPhone 11": { "tapa-trasera": { "solo-vidrio": 45 }, pantalla: { incell: 50 }, bateria: 50 },
+    "iPhone 11 Pro": { "tapa-trasera": { "solo-vidrio": 45 }, pantalla: { oled: 95 }, bateria: 54 },
+    "iPhone 11 Pro Max": { "tapa-trasera": { "solo-vidrio": 45 }, pantalla: { oled: 110 }, bateria: 68 },
+
+    "iPhone 12 mini": { "tapa-trasera": { "solo-vidrio": 45 }, pantalla: { oled: 120 }, bateria: 50 },
+    "iPhone 12": { "tapa-trasera": { "solo-vidrio": 50 }, pantalla: { oled: 130 }, bateria: 60 },
+    "iPhone 12 Pro": { "tapa-trasera": { "solo-vidrio": 50 }, pantalla: { oled: 130 }, bateria: 60 },
+    "iPhone 12 Pro Max": { "tapa-trasera": { "solo-vidrio": 50 }, pantalla: { oled: 146 }, bateria: 65 },
+
+    "iPhone 13 mini": { "tapa-trasera": { "solo-vidrio": 60 }, pantalla: { oled: 146 }, bateria: 68 },
+    "iPhone 13": { "tapa-trasera": { "solo-vidrio": 60 }, pantalla: { oled: 144 }, bateria: 69 },
+    "iPhone 13 Pro": { "tapa-trasera": { "solo-vidrio": 60 }, pantalla: { oled: 170 }, bateria: 75 },
+    "iPhone 13 Pro Max": { "tapa-trasera": { "solo-vidrio": 60 }, pantalla: { oled: 180 }, bateria: 90 },
+
+    "iPhone 14": { "tapa-trasera": { "solo-vidrio": 70 }, pantalla: { oled: 140 }, bateria: 78 },
+    "iPhone 14 Plus": { "tapa-trasera": { "solo-vidrio": 70 }, pantalla: { oled: 150 }, bateria: 81 },
+    "iPhone 14 Pro": { "tapa-trasera": { "solo-vidrio": 70 }, pantalla: { oled: 160, original: 390 }, bateria: 87 },
+    "iPhone 14 Pro Max": { "tapa-trasera": { "solo-vidrio": 70 }, pantalla: { oled: 170 }, bateria: 93 },
+
+    "iPhone 15": { pantalla: { oled: 166 }, bateria: 78 },
+    "iPhone 15 Plus": { pantalla: { oled: 210 }, bateria: 84 },
+    "iPhone 15 Pro": { "tapa-trasera": { "solo-vidrio": 80 }, pantalla: { oled: 168 }, bateria: 87 },
+    "iPhone 15 Pro Max": { "tapa-trasera": { "solo-vidrio": 80 }, pantalla: { oled: 170 }, bateria: 99 },
+
+    "iPhone 16": { "tapa-trasera": { "solo-vidrio": 85 }, pantalla: { oled: 170 } },
+    "iPhone 16 Plus": { pantalla: { oled: 180 } },
+    "iPhone 16 Pro": { pantalla: { oled: 300 } },
+    "iPhone 16 Pro Max": { "tapa-trasera": { "solo-vidrio": 85 }, pantalla: { oled: 350 } },
+
+    "iPhone 17 Pro": { pantalla: { oled: 300 } },
+    "iPhone 17 Pro Max": { pantalla: { oled: 350, original: 650 } },
+  },
+};
+
+/** Precio de un servicio simple (sin opciones de repuesto), o null si no está cargado. */
 function getPrice(category, model, serviceId) {
-  return (
-    (PRICES[category] && PRICES[category][model] && PRICES[category][model][serviceId]) ||
-    null
-  );
+  const v = PRICES[category] && PRICES[category][model] && PRICES[category][model][serviceId];
+  return typeof v === "number" ? v : null;
+}
+
+/** Precio de una opción de repuesto puntual (ej. pantalla > oled), o null si no está cargado. */
+function getOptionPrice(category, model, serviceId, optionId) {
+  const v = PRICES[category] && PRICES[category][model] && PRICES[category][model][serviceId];
+  return v && typeof v === "object" && typeof v[optionId] === "number" ? v[optionId] : null;
+}
+
+/** ids de las opciones de repuesto que tienen precio cargado para este modelo. */
+function getPricedOptionIds(category, model, serviceId) {
+  const v = PRICES[category] && PRICES[category][model] && PRICES[category][model][serviceId];
+  return v && typeof v === "object" ? Object.keys(v) : [];
+}
+
+/** Formatea un precio en dólares para mostrar en la página. */
+function formatPrice(amount) {
+  return amount == null ? null : `US$ ${amount}`;
 }

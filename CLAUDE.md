@@ -4,20 +4,34 @@
 
 Sitio web para un negocio de reparación de productos Apple (usuario: menazzi@gmail.com).
 Servicios ofrecidos: reparación de **iPhone, iPad, Mac y Apple Watch** — pantalla, batería,
-vidrio/tapa trasera, cámara, puerto de carga, botones y diagnóstico general.
+vidrio/tapa trasera, cámara, puerto de carga, botones y diagnóstico general. El foco
+principal del negocio (y del catálogo de precios) es **iPhone**; iPad y Mac todavía no
+tienen catálogo definido y usan un flujo de "cotizá tu equipo" directo por WhatsApp.
 
-Diseño inspirado en la estética de apple.com (minimalista, tipografía grande, mucho
-blanco, nav superior con blur) pero **sin usar logo ni fotos reales de Apple** (marca
-registrada) — se imita el estilo visual, no los activos de marca.
+Estética elegida por el usuario tras comparar 3 variantes: **"Cristal" (Liquid Glass)** —
+paneles translúcidos con blur, fondo con manchas de color difuminadas, botones tipo
+píldora, tipografía nativa de Apple (SF Pro). Inspirado en el estilo de apple.com pero
+**sin usar logo ni fotos reales de Apple** (marca registrada) — se imita el estilo
+visual, no los activos de marca.
 
 ## Reglas de negocio acordadas con el usuario
 
-- Solo se listan modelos de **iPhone, iPad y Apple Watch desde 2019 en adelante**
-  (equivalente a iPhone 11). No se agregan modelos más viejos (ej. no iPhone 6s).
-- **Mac es la excepción**: se listan modelos **desde 2012 en adelante**, porque las Mac
-  duran más y siguen siendo reparables.
-- El listado de modelos y de servicios de reparación es una estructura inicial; los
-  precios y el detalle final por modelo los va a cargar el usuario después.
+- Modelos de **iPhone, iPad y Apple Watch desde 2019 en adelante** (equivalente a
+  iPhone 11) como criterio general. **Excepción**: se agregaron modelos de iPhone
+  anteriores (8, 8 Plus, X, XS, XS Max, XR) porque el usuario dio precios reales de
+  vidrio trasero para esos modelos — si fue sin querer, avisar para sacarlos.
+- **Mac es otra excepción**: modelos **desde 2012 en adelante**, porque las Mac duran
+  más y siguen siendo reparables.
+- **Precios en dólares (USD)**, no en pesos. El usuario pidió en algún momento evaluar
+  mostrar también el equivalente en pesos al "dólar blue" de Ámbito, pero **pidió
+  explícitamente posponer esa parte** ("por ahora no hagas lo de Ámbito, arrancá con
+  la lista"). No está implementado. Si se retoma: no inventar/hardcodear una cotización
+  fija (se desactualiza y puede inducir a error) — habría que traerla en vivo desde
+  algún origen confiable, con manejo de que la consulta puede fallar.
+- Batería es un ítem simple (un solo precio por modelo), **no** tiene variantes tipo
+  "estándar / alta capacidad" — eso se había armado como ejemplo antes de tener datos
+  reales y se sacó al cargar la lista de precios real.
+- Pantalla y vidrio/tapa trasera de iPhone sí tienen variantes de repuesto (ver más abajo).
 
 ## Stack técnico
 
@@ -27,48 +41,78 @@ un hosting compartido, etc.). No hay dependencias externas.
 ## Estructura de archivos
 
 ```
-index.html          Home: hero, categorías, servicios, contacto
-iphone.html          Página de categoría iPhone (pestañas por modelo)
-ipad.html             Página de categoría iPad
-mac.html              Página de categoría Mac
-watch.html            Página de categoría Apple Watch
-css/styles.css        Estilos (design system tipo Apple: colores, tipografía, componentes)
-js/config.js          Datos generales del negocio (nombre, WhatsApp, teléfono, email, etc.)
-js/models-data.js     Modelos por categoría + servicios de reparación + precios
-js/main.js            Lógica: nav móvil, inyección de datos de contacto, pestañas de modelo
+index.html            Home: hero, buscador guiado, categorías, servicios, contacto
+iphone.html            Página de categoría iPhone (modelos agrupados + reparaciones)
+ipad.html               Página de categoría iPad (cotización directa)
+mac.html                Página de categoría Mac (cotización directa)
+watch.html              Página de categoría Apple Watch
+contacto.html           Página de contacto (WhatsApp, teléfono, email, horarios, redes)
+css/styles.css          Estilos (glass/"Cristal": blur, translucidez, paleta, componentes)
+js/config.js            Datos generales del negocio (nombre, WhatsApp, teléfono, email, etc.)
+js/models-data.js       Modelos, grupos de modelos, servicios, opciones de repuesto y PRICES
+js/main.js              Lógica: nav móvil, contacto, páginas de categoría, buscador guiado
 ```
+
+### Modelos agrupados (acordeón)
+
+`MODEL_GROUPS[categoria]` es un array de `{ label, models: [...] }` (ej. "iPhone 16" con
+sus 5 variantes adentro). Tanto la página de categoría como el buscador de la home
+muestran estos grupos como un acordeón (se toca el grupo y se despliegan sus modelos) en
+vez de una lista plana larga. `MODELS[categoria]` es la lista plana derivada (grupos +
+`OTHER_MODEL_LABEL`) para donde haga falta.
 
 ### Cómo están armadas las páginas de categoría
 
-Cada página de categoría (`iphone.html`, `ipad.html`, `mac.html`, `watch.html`) tiene los
-mismos dos contenedores vacíos:
+Cada página de categoría tiene los mismos dos contenedores vacíos:
 
 ```html
 <div id="model-tabs" class="model-tabs"></div>
 <div id="model-panel" class="model-panel"></div>
 ```
 
-y al final llama a `initCategoryPage("iphone")` (o la categoría que corresponda). Esa
-función (en `js/main.js`) lee `MODELS` y `SERVICES_BY_CATEGORY` de `js/models-data.js`,
-dibuja las pestañas de modelo, y al hacer clic en una pestaña muestra el panel con los
-servicios de reparación disponibles para ese modelo (con precio si está cargado en
-`PRICES`, o "Consultar" si no).
+y al final llama a `initCategoryPage("iphone")` (o la categoría que corresponda), en
+`js/main.js`. Para iPad/Mac (`SIMPLE_QUOTE_CATEGORIES`) el panel muestra un cartel de
+cotización directa en vez del listado de servicios.
+
+### Precios (`PRICES` en `js/models-data.js`)
+
+Todo en dólares, como números (el formateo "US$ 50" se hace al mostrar, con
+`formatPrice()`). Dos formas según el servicio:
+
+- **Servicios simples** (batería, cámara, puerto de carga, botones, diagnóstico):
+  `PRICES["iphone"]["iPhone 13"]["bateria"] = 69`
+- **Servicios con opciones de repuesto** (pantalla y vidrio/tapa trasera, solo en
+  iPhone — ver `IPHONE_REPAIR_OPTIONS`): el valor es un objeto por opción:
+  `PRICES["iphone"]["iPhone 13"]["pantalla"] = { oled: 144 }`
+
+Para pantalla, las opciones posibles son `oled`, `incell` (LCD) y `original` (repuesto
+Apple). **No todos los modelos tienen las tres**: la página solo muestra las opciones
+que tienen precio cargado para ese modelo puntual (ej. iPhone 11 base solo tiene
+`incell`, nunca tuvo pantalla OLED de fábrica). Si un modelo todavía no tiene ningún
+precio cargado para ese servicio, se muestran todas las opciones con "Consultar" para
+no dejar la sección vacía (ver `getAvailableOptions()` en `main.js`).
+
+Para vidrio/tapa trasera las opciones son `solo-vidrio` (cambio de vidrio con láser) y
+`tapa-completa` (cambio de tapa entera) — hoy solo hay precios cargados de `solo-vidrio`.
 
 ## Pendiente — datos reales para cargar
-
-Estos son placeholders que el usuario tiene que reemplazar:
 
 1. **`js/config.js`**: nombre real del negocio (hoy: "iFix Service" — placeholder,
    confirmar o cambiar), número de WhatsApp, teléfono, email, dirección, horarios,
    redes sociales.
-2. **`js/models-data.js` → objeto `PRICES`**: precios por modelo y tipo de reparación.
-   Formato: `PRICES["iphone"]["iPhone 15 Pro"]["pantalla"] = "$XX.XXX"`.
-3. Revisar si la lista de modelos de `MODELS` está completa/actualizada (hay que
-   agregar los modelos que salgan después de la fecha de creación de este archivo).
-4. Imágenes reales del local/trabajos (hoy no hay fotos, todo es ícono/emoji para
+2. **Tiempos de espera**: no hay ningún dato cargado todavía (el usuario dijo que lo
+   iba a pasar más adelante). Por ahora todas las opciones de repuesto muestran
+   "Tiempo: A confirmar" fijo en `renderOptionCard()`.
+3. **Precios de iPad, Mac y Apple Watch**: sin catálogo. iPad y Mac muestran cotización
+   directa (`SIMPLE_QUOTE_CATEGORIES`); Apple Watch ya tiene el listado de servicios
+   pero sin ningún precio cargado (todo "Consultar").
+4. **Precios de vidrio/tapa trasera de iPhone 15, 15 Plus, 16 Plus, 16 Pro**: no se
+   pasaron en la primera lista (quedan en "Consultar").
+5. **Tapa completa** (a diferencia de "solo vidrio"): sin precios en ningún modelo.
+6. **Dólar blue / Ámbito**: pospuesto a pedido del usuario (ver reglas de negocio arriba).
+7. Imágenes reales del local/trabajos (hoy no hay fotos, todo es ícono/emoji para
    evitar usar imágenes con derechos de Apple).
-5. Definir si se quiere dominio propio y dónde se va a hostear (GitHub Pages, Netlify,
-   hosting compartido, etc.).
+8. Definir dominio propio y dónde hostear (GitHub Pages, Netlify, hosting compartido, etc.).
 
 ## Convenciones
 
@@ -76,3 +120,5 @@ Estos son placeholders que el usuario tiene que reemplazar:
   licencia) — solo inspiración de layout y paleta.
 - Mantener `js/config.js` y `js/models-data.js` como única fuente de verdad para datos
   editables — no hardcodear teléfono/precios directamente en el HTML.
+- Los precios son siempre números en USD dentro de `PRICES`; formatear con
+  `formatPrice()` al mostrarlos, nunca como string ya formateado en los datos.
