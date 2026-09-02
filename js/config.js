@@ -4,7 +4,7 @@
  * en todas las páginas (nav, contacto, footer, botones de WhatsApp).
  */
 const CONFIG = {
-  businessName: "iFix Service",
+  businessName: "Inkblot",
   tagline: "Servicio técnico especializado en productos Apple",
 
   // Número de WhatsApp en formato internacional, sin +, espacios ni guiones. Ej: 5491122334455
@@ -12,7 +12,7 @@ const CONFIG = {
   whatsappMessage: "Hola! Quiero consultar por una reparación.",
 
   phoneDisplay: "+54 9 11 0000-0000",
-  email: "contacto@ifixservice.com",
+  email: "contacto@inkblot.com.ar",
   address: "Dirección a confirmar, Ciudad, Argentina",
   hours: "Lunes a viernes de 10 a 19 hs · Sábados de 10 a 14 hs",
 

@@ -103,12 +103,21 @@ function findGroupIndex(category, model) {
   return groups.findIndex((g) => g.models.includes(model));
 }
 
-function renderOptionCard(opt, priceAmount) {
+/**
+ * @param {object} [checkbox] Si se pasa, agrega un checkbox para incluir esta opción
+ *   puntual en el pedido de cotización (usado en la página de categoría, donde se arma
+ *   un pedido con varias reparaciones a la vez). { serviceId, checked }.
+ */
+function renderOptionCard(opt, priceAmount, checkbox) {
   const pros = opt.pros.map((p) => `<li>${escapeHtml(p)}</li>`).join("");
   const cons = opt.cons.map((c) => `<li>${escapeHtml(c)}</li>`).join("");
   const price = formatPrice(priceAmount);
+  const checkHtml = checkbox
+    ? `<button class="option-card__check${checkbox.checked ? " is-checked" : ""}" data-select-service="${checkbox.serviceId}" data-select-option="${opt.id}" aria-pressed="${checkbox.checked}" aria-label="Incluir ${escapeHtml(opt.name)} en el pedido"></button>`
+    : "";
   return `
-    <div class="option-card">
+    <div class="option-card${checkbox ? " option-card--selectable" : ""}">
+      ${checkHtml}
       <h5>${escapeHtml(opt.name)}</h5>
       <p class="option-card__tech">${escapeHtml(opt.tech)}</p>
       ${pros ? `<p class="option-card__label option-card__label--pro">Puntos a favor</p><ul class="option-card__list">${pros}</ul>` : ""}
@@ -151,6 +160,22 @@ function initCategoryPage(categoryKey) {
 
   let activeModel = groups[0].models[0];
   let openGroupIndex = 0;
+  let selected = []; // reparaciones tildadas para pedir juntas: { serviceId, optionId | null }
+  const openOptionServices = new Set(); // qué acordeones de opciones (pantalla, tapa trasera) están abiertos
+
+  function isSelected(serviceId, optionId) {
+    return selected.some((x) => x.serviceId === serviceId && x.optionId === optionId);
+  }
+
+  function toggleSelection(serviceId, optionId) {
+    if (isSelected(serviceId, optionId)) {
+      selected = selected.filter((x) => !(x.serviceId === serviceId && x.optionId === optionId));
+    } else {
+      // Una sola opción tildada por servicio (no tiene sentido pedir Pantalla OLED e Incell juntas).
+      selected = selected.filter((x) => x.serviceId !== serviceId);
+      selected.push({ serviceId, optionId });
+    }
+  }
 
   function render() {
     tabsEl.innerHTML = renderModelGroups(categoryKey, activeModel, openGroupIndex);
@@ -166,6 +191,7 @@ function initCategoryPage(categoryKey) {
       btn.addEventListener("click", () => {
         activeModel = btn.dataset.model;
         openGroupIndex = findGroupIndex(categoryKey, activeModel);
+        selected = []; // el pedido armado era para el modelo anterior
         render();
       });
     });
@@ -187,24 +213,32 @@ function initCategoryPage(categoryKey) {
           if (hasOptions) {
             const options = getAvailableOptions(categoryKey, activeModel, s.id);
             const cards = options
-              .map((o) => renderOptionCard(o, getOptionPrice(categoryKey, activeModel, s.id, o.id)))
+              .map((o) =>
+                renderOptionCard(o, getOptionPrice(categoryKey, activeModel, s.id, o.id), {
+                  serviceId: s.id,
+                  checked: isSelected(s.id, o.id),
+                })
+              )
               .join("");
+            const isOpen = openOptionServices.has(s.id);
             return `
               <div class="repair-item repair-item--expandable">
                 <div class="repair-item__icon">${s.icon}</div>
                 <div class="repair-item__body">
-                  <button class="repair-item__toggle" data-toggle-options="${s.id}">
+                  <button class="repair-item__toggle${isOpen ? " is-open" : ""}" data-toggle-options="${s.id}">
                     <h4>${s.label}</h4>
                     <span class="repair-item__toggle-arrow">▾</span>
                   </button>
                   <p>${s.desc}</p>
-                  <div class="repair-options" id="options-${s.id}" hidden>${cards}</div>
+                  <div class="repair-options" id="options-${s.id}" ${isOpen ? "" : "hidden"}>${cards}</div>
                 </div>
               </div>`;
           }
           const price = formatPrice(getPrice(categoryKey, activeModel, s.id));
+          const checked = isSelected(s.id, null);
           return `
             <div class="repair-item">
+              <button class="repair-item__check${checked ? " is-checked" : ""}" data-select-service="${s.id}" aria-pressed="${checked}" aria-label="Incluir ${escapeHtml(s.label)} en el pedido"></button>
               <div class="repair-item__icon">${s.icon}</div>
               <div class="repair-item__body">
                 <h4>${s.label}</h4>
@@ -215,21 +249,54 @@ function initCategoryPage(categoryKey) {
         })
         .join("");
 
+      const hasSelection = selected.length > 0;
+      let ctaLabel = "Solicitar cotización por WhatsApp";
+      let message = `Hola! Quiero consultar por una reparación para ${activeModel}.`;
+      let totalHtml = "";
+
+      if (hasSelection) {
+        const lines = selected.map((sel, i) => {
+          const service = SERVICES.find((x) => x.id === sel.serviceId);
+          const option = sel.optionId ? (IPHONE_REPAIR_OPTIONS[sel.serviceId] || []).find((o) => o.id === sel.optionId) : null;
+          const label = option ? option.name : service.label;
+          const priceAmount = option
+            ? getOptionPrice(categoryKey, activeModel, sel.serviceId, sel.optionId)
+            : getPrice(categoryKey, activeModel, sel.serviceId);
+          return { n: i + 1, label, priceAmount };
+        });
+        ctaLabel = `Consultar ${selected.length} ${selected.length > 1 ? "reparaciones" : "reparación"} por WhatsApp`;
+        message = `Hola! Tengo un/a ${activeModel} y quiero cotizar estas reparaciones:\n${lines
+          .map((l) => `${l.n}) ${l.label}`)
+          .join("\n")}\n¿Me pasás precio${lines.length > 1 ? "s" : ""} y tiempo de espera?`;
+        const allPriced = lines.every((l) => l.priceAmount != null);
+        const totalAmount = lines.reduce((sum, l) => sum + (l.priceAmount || 0), 0);
+        totalHtml = `<div class="model-panel__total${allPriced ? "" : " is-empty"}">${allPriced ? `Total: ${formatPrice(totalAmount)}` : "Consultar precio total"}</div>`;
+      }
+
       panelEl.innerHTML = `
         <div class="model-panel__title">${escapeHtml(activeModel)}</div>
-        <p class="model-panel__subtitle">Servicios de reparación disponibles para este modelo</p>
+        <p class="model-panel__subtitle">Tildá las reparaciones que necesitás y consultalas juntas por WhatsApp</p>
         <div class="repair-list">${items}</div>
+        ${totalHtml}
         <div class="model-panel__cta">
-          <a class="btn btn--primary" href="${whatsappLink(
-            `Hola! Quiero consultar por una reparación para ${activeModel}.`
-          )}" target="_blank" rel="noopener">Solicitar cotización por WhatsApp</a>
+          <a class="btn btn--primary" href="${whatsappLink(message)}" target="_blank" rel="noopener">${ctaLabel}</a>
         </div>`;
 
       panelEl.querySelectorAll("[data-toggle-options]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          const optionsEl = document.getElementById(`options-${btn.dataset.toggleOptions}`);
-          optionsEl.hidden = !optionsEl.hidden;
-          btn.classList.toggle("is-open", !optionsEl.hidden);
+          const sid = btn.dataset.toggleOptions;
+          if (openOptionServices.has(sid)) {
+            openOptionServices.delete(sid);
+          } else {
+            openOptionServices.add(sid);
+          }
+          render();
+        });
+      });
+      panelEl.querySelectorAll("[data-select-service]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          toggleSelection(btn.dataset.selectService, btn.dataset.selectOption || null);
+          render();
         });
       });
     }

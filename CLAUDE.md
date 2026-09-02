@@ -2,11 +2,18 @@
 
 ## Qué es este proyecto
 
-Sitio web para un negocio de reparación de productos Apple (usuario: menazzi@gmail.com).
-Servicios ofrecidos: reparación de **iPhone, iPad, Mac y Apple Watch** — pantalla, batería,
-vidrio/tapa trasera, cámara, puerto de carga, botones y diagnóstico general. El foco
-principal del negocio (y del catálogo de precios) es **iPhone**; iPad y Mac todavía no
-tienen catálogo definido y usan un flujo de "cotizá tu equipo" directo por WhatsApp.
+Sitio web para **Inkblot** (usuario: menazzi@gmail.com), un negocio de reparación de
+productos Apple. Servicios ofrecidos: reparación de **iPhone, iPad, Mac y Apple Watch**
+— pantalla, batería, vidrio/tapa trasera, cámara, puerto de carga, botones y diagnóstico
+general. El foco principal del negocio (y del catálogo de precios) es **iPhone**; iPad
+y Mac todavía no tienen catálogo definido y usan un flujo de "cotizá tu equipo" directo
+por WhatsApp.
+
+Este sitio es una **página paralela a la página oficial de Inkblot** (no la reemplaza).
+El usuario no aclaró todavía qué implica eso en la práctica (¿un link cruzado a la
+página oficial? ¿mismo dominio en otra ruta? ¿landing independiente para este servicio
+puntual?) — preguntar antes de asumir algo si se vuelve relevante (dominio, si hay que
+linkear la página oficial desde acá, etc.).
 
 Estética elegida por el usuario tras comparar 3 variantes: **"Cristal" (Liquid Glass)** —
 paneles translúcidos con blur, fondo con manchas de color difuminadas, botones tipo
@@ -97,9 +104,9 @@ Para vidrio/tapa trasera las opciones son `solo-vidrio` (cambio de vidrio con l�
 
 ## Pendiente — datos reales para cargar
 
-1. **`js/config.js`**: nombre real del negocio (hoy: "iFix Service" — placeholder,
-   confirmar o cambiar), número de WhatsApp, teléfono, email, dirección, horarios,
-   redes sociales.
+1. **`js/config.js`**: nombre del negocio ya confirmado como **"Inkblot"**. Falta cargar
+   el resto: número de WhatsApp real, teléfono, email (hoy es un placeholder inventado,
+   `contacto@inkblot.com.ar`, sin confirmar), dirección, horarios, redes sociales.
 2. **Tiempos de espera**: no hay ningún dato cargado todavía (el usuario dijo que lo
    iba a pasar más adelante). Por ahora todas las opciones de repuesto muestran
    "Tiempo: A confirmar" fijo en `renderOptionCard()`.

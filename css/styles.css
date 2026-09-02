@@ -13,6 +13,11 @@
   --white: #fff;
   --accent: #06c;
   --accent-hover: #0077e6;
+
+  /* Azul marino del isotipo de Inkblot: reservado para el logo, no para la UI. */
+  --navy: #0a3161;
+  --navy-deep: #06213f;
+
   --radius: 18px;
   --radius-lg: 26px;
   --nav-height: 56px;
@@ -630,6 +635,31 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   align-items: flex-start;
 }
 
+.repair-item__check {
+  flex-shrink: 0;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  border-radius: 6px;
+  border: 2px solid rgba(0, 0, 0, 0.18);
+  background: transparent;
+  transition: background .15s, border-color .15s;
+}
+.repair-item__check:hover { border-color: var(--accent); }
+.repair-item__check.is-checked { background: var(--accent); border-color: var(--accent); }
+.repair-item__check.is-checked::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .repair-item__icon { font-size: 24px; line-height: 1; }
 .repair-item__body h4 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
 .repair-item__body p { font-size: 13px; color: var(--gray); margin-bottom: 8px; }
@@ -660,9 +690,35 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 }
 
 .option-card {
+  position: relative;
   background: var(--bg-light);
   border-radius: 12px;
   padding: 16px;
+}
+.option-card--selectable { padding-right: 46px; }
+.option-card__check {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid rgba(0, 0, 0, 0.18);
+  background: var(--white);
+  transition: background .15s, border-color .15s;
+}
+.option-card__check:hover { border-color: var(--accent); }
+.option-card__check.is-checked { background: var(--accent); border-color: var(--accent); }
+.option-card__check.is-checked::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
 }
 .option-card h5 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--near-black); }
 .option-card__tech { font-size: 13px; color: var(--gray); margin-bottom: 10px; }
@@ -710,8 +766,17 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   color: var(--accent);
 }
 
+.model-panel__total {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 28px;
+}
+.model-panel__total.is-empty { color: var(--gray-dark); font-size: 17px; font-weight: 500; }
+
 .model-panel__cta {
-  margin-top: 32px;
+  margin-top: 20px;
   text-align: center;
 }
 
