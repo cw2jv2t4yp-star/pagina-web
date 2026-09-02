@@ -8,11 +8,8 @@ const CONFIG = {
   tagline: "Servicio técnico especializado en productos Apple",
 
   // Número de WhatsApp en formato internacional, sin +, espacios ni guiones. Ej: 5491122334455
-  // OJO: el teléfono real es +54 11 5887-3498 (sin el "9"), tal cual figura en la página
-  // oficial. Para números argentinos, los links de WhatsApp (wa.me) suelen necesitar un
-  // "9" después del 54 para que abran bien en el celular. Se lo agregamos acá, pero
-  // conviene probarlo y avisar si no abre correcto para ajustarlo.
-  whatsappNumber: "5491158873498",
+  // Número personal del usuario (11 6849-2024), no el de la página oficial de Inkblot.
+  whatsappNumber: "5491168492024",
   whatsappMessage: "Hola! Quiero consultar por una reparación.",
 
   phoneDisplay: "+54 11 5887-3498",
