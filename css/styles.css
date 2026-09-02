@@ -126,7 +126,23 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 }
 
 @media (max-width: 734px) {
-  .nav__links { display: none; }
+  .nav__links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 12px 22px 18px;
+    font-size: 16px;
+  }
+  .nav__links.is-open { display: flex; }
+  .nav__links a { display: block; padding: 10px 0; }
   .nav__toggle { display: block; }
 }
 
