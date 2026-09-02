@@ -13,7 +13,7 @@
 const SERVICES = [
   { id: "pantalla", label: "Pantalla", desc: "Cambio de módulo de pantalla original o compatible premium.", icon: "🖥️" },
   { id: "bateria", label: "Batería", desc: "Reemplazo de batería por baja duración o desgaste.", icon: "🔋" },
-  { id: "tapa-trasera", label: "Vidrio / Tapa trasera", desc: "Cambio de vidrio o tapa trasera rota o astillada.", icon: "🔲" },
+  { id: "tapa-trasera", label: "Vidrio trasero", desc: "Cambio de vidrio trasero roto o astillado.", icon: "🔲" },
   { id: "camara", label: "Cámara", desc: "Reparación de cámara trasera o frontal (foco, vidrio, módulo).", icon: "📷" },
   { id: "puerto-carga", label: "Puerto de carga", desc: "Limpieza o cambio de conector de carga.", icon: "🔌" },
   { id: "botones", label: "Botones", desc: "Reparación de botones de volumen, encendido o Home/Action.", icon: "🔘" },
@@ -122,22 +122,6 @@ const IPHONE_REPAIR_OPTIONS = {
       cons: ["La opción más cara", "No está disponible para todos los modelos"],
     },
   ],
-  "tapa-trasera": [
-    {
-      id: "solo-vidrio",
-      name: "Cambio de solo el vidrio (láser)",
-      tech: "Se retira con láser solo el vidrio roto y se coloca uno nuevo, sin cambiar la tapa completa.",
-      pros: ["Más económico", "Se mantiene la tapa y las cámaras originales"],
-      cons: ["Proceso más delicado", "No siempre es posible según el daño"],
-    },
-    {
-      id: "tapa-completa",
-      name: "Cambio de tapa completa",
-      tech: "Se reemplaza toda la tapa trasera, incluyendo el marco.",
-      pros: ["Resultado más prolijo si el daño es grande", "También repara golpes en el marco"],
-      cons: ["Más caro", "Reparación más larga"],
-    },
-  ],
 };
 
 // Síntomas frecuentes por tipo de reparación. Se usan en el paso de "diagnóstico"
@@ -203,50 +187,42 @@ const MODEL_HELP = {
 // ("US$ 50") se hace al mostrarlos, no acá.
 //
 // Dos formas según el servicio:
-//   - Servicios simples (batería, cámara, puerto de carga, botones, diagnóstico):
+//   - Servicios simples (batería, vidrio trasero, cámara, puerto de carga, botones, diagnóstico):
 //       PRICES["iphone"]["iPhone 13"]["bateria"] = 69
-//   - Servicios con opciones de repuesto (pantalla, vidrio/tapa trasera en iPhone):
+//   - Servicios con opciones de repuesto (por ahora, solo pantalla en iPhone):
 //       PRICES["iphone"]["iPhone 13"]["pantalla"] = { oled: 144 }
 //     Si un modelo no tiene cargada una opción (ej. no tiene "incell"), esa
 //     opción no se ofrece para ese modelo y no aparece en la página.
 const PRICES = {
   iphone: {
-    "iPhone 8": { "tapa-trasera": { "solo-vidrio": 20 } },
-    "iPhone 8 Plus": { "tapa-trasera": { "solo-vidrio": 20 } },
-    "iPhone SE (2ª gen., 2020)": { "tapa-trasera": { "solo-vidrio": 20 } },
-    "iPhone X": { "tapa-trasera": { "solo-vidrio": 45 } },
-    "iPhone XS": { "tapa-trasera": { "solo-vidrio": 45 } },
-    "iPhone XS Max": { "tapa-trasera": { "solo-vidrio": 45 } },
-    "iPhone XR": { "tapa-trasera": { "solo-vidrio": 45 } },
+    "iPhone 11": { pantalla: { incell: 50 }, bateria: 50 },
+    "iPhone 11 Pro": { pantalla: { oled: 95 }, bateria: 54 },
+    "iPhone 11 Pro Max": { pantalla: { oled: 110 }, bateria: 68 },
 
-    "iPhone 11": { "tapa-trasera": { "solo-vidrio": 45 }, pantalla: { incell: 50 }, bateria: 50 },
-    "iPhone 11 Pro": { "tapa-trasera": { "solo-vidrio": 45 }, pantalla: { oled: 95 }, bateria: 54 },
-    "iPhone 11 Pro Max": { "tapa-trasera": { "solo-vidrio": 45 }, pantalla: { oled: 110 }, bateria: 68 },
+    "iPhone 12 mini": { pantalla: { oled: 120 }, bateria: 50 },
+    "iPhone 12": { pantalla: { oled: 130 }, bateria: 60 },
+    "iPhone 12 Pro": { pantalla: { oled: 130 }, bateria: 60 },
+    "iPhone 12 Pro Max": { pantalla: { oled: 146 }, bateria: 65 },
 
-    "iPhone 12 mini": { "tapa-trasera": { "solo-vidrio": 45 }, pantalla: { oled: 120 }, bateria: 50 },
-    "iPhone 12": { "tapa-trasera": { "solo-vidrio": 50 }, pantalla: { oled: 130 }, bateria: 60 },
-    "iPhone 12 Pro": { "tapa-trasera": { "solo-vidrio": 50 }, pantalla: { oled: 130 }, bateria: 60 },
-    "iPhone 12 Pro Max": { "tapa-trasera": { "solo-vidrio": 50 }, pantalla: { oled: 146 }, bateria: 65 },
+    "iPhone 13 mini": { pantalla: { oled: 146 }, bateria: 68 },
+    "iPhone 13": { pantalla: { oled: 144 }, bateria: 69 },
+    "iPhone 13 Pro": { pantalla: { oled: 170 }, bateria: 75 },
+    "iPhone 13 Pro Max": { pantalla: { oled: 180 }, bateria: 90 },
 
-    "iPhone 13 mini": { "tapa-trasera": { "solo-vidrio": 60 }, pantalla: { oled: 146 }, bateria: 68 },
-    "iPhone 13": { "tapa-trasera": { "solo-vidrio": 60 }, pantalla: { oled: 144 }, bateria: 69 },
-    "iPhone 13 Pro": { "tapa-trasera": { "solo-vidrio": 60 }, pantalla: { oled: 170 }, bateria: 75 },
-    "iPhone 13 Pro Max": { "tapa-trasera": { "solo-vidrio": 60 }, pantalla: { oled: 180 }, bateria: 90 },
-
-    "iPhone 14": { "tapa-trasera": { "solo-vidrio": 70 }, pantalla: { oled: 140 }, bateria: 78 },
-    "iPhone 14 Plus": { "tapa-trasera": { "solo-vidrio": 70 }, pantalla: { oled: 150 }, bateria: 81 },
-    "iPhone 14 Pro": { "tapa-trasera": { "solo-vidrio": 70 }, pantalla: { oled: 160, original: 390 }, bateria: 87 },
-    "iPhone 14 Pro Max": { "tapa-trasera": { "solo-vidrio": 70 }, pantalla: { oled: 170 }, bateria: 93 },
+    "iPhone 14": { pantalla: { oled: 140 }, bateria: 78 },
+    "iPhone 14 Plus": { pantalla: { oled: 150 }, bateria: 81 },
+    "iPhone 14 Pro": { pantalla: { oled: 160, original: 390 }, bateria: 87 },
+    "iPhone 14 Pro Max": { pantalla: { oled: 170 }, bateria: 93 },
 
     "iPhone 15": { pantalla: { oled: 166 }, bateria: 78 },
     "iPhone 15 Plus": { pantalla: { oled: 210 }, bateria: 84 },
-    "iPhone 15 Pro": { "tapa-trasera": { "solo-vidrio": 80 }, pantalla: { oled: 168 }, bateria: 87 },
-    "iPhone 15 Pro Max": { "tapa-trasera": { "solo-vidrio": 80 }, pantalla: { oled: 170 }, bateria: 99 },
+    "iPhone 15 Pro": { pantalla: { oled: 168 }, bateria: 87 },
+    "iPhone 15 Pro Max": { pantalla: { oled: 170 }, bateria: 99 },
 
-    "iPhone 16": { "tapa-trasera": { "solo-vidrio": 85 }, pantalla: { oled: 170 } },
+    "iPhone 16": { pantalla: { oled: 170 } },
     "iPhone 16 Plus": { pantalla: { oled: 180 } },
     "iPhone 16 Pro": { pantalla: { oled: 300 } },
-    "iPhone 16 Pro Max": { "tapa-trasera": { "solo-vidrio": 85 }, pantalla: { oled: 350 } },
+    "iPhone 16 Pro Max": { pantalla: { oled: 350 } },
 
     "iPhone 17 Pro": { pantalla: { oled: 300 } },
     "iPhone 17 Pro Max": { pantalla: { oled: 350, original: 650 } },

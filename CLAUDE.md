@@ -4,7 +4,7 @@
 
 Sitio web para **Inkblot** (usuario: menazzi@gmail.com), un negocio de reparación de
 productos Apple. Servicios ofrecidos: reparación de **iPhone, iPad, Mac y Apple Watch**
-— pantalla, batería, vidrio/tapa trasera, cámara, puerto de carga, botones y diagnóstico
+— pantalla, batería, vidrio trasero, cámara, puerto de carga, botones y diagnóstico
 general. El foco principal del negocio (y del catálogo de precios) es **iPhone**; iPad
 y Mac todavía no tienen catálogo definido y usan un flujo de "cotizá tu equipo" directo
 por WhatsApp.
@@ -25,8 +25,9 @@ visual, no los activos de marca.
 
 - Modelos de **iPhone, iPad y Apple Watch desde 2019 en adelante** (equivalente a
   iPhone 11) como criterio general. **Excepción**: se agregaron modelos de iPhone
-  anteriores (8, 8 Plus, X, XS, XS Max, XR) porque el usuario dio precios reales de
-  vidrio trasero para esos modelos — si fue sin querer, avisar para sacarlos.
+  anteriores (8, 8 Plus, X, XS, XS Max, XR) porque el usuario había dado precios reales
+  de vidrio trasero para esos modelos. Esos precios de vidrio trasero se sacaron después
+  a pedido del usuario (ver más abajo) — los modelos se mantienen igual.
 - **Mac es otra excepción**: modelos **desde 2012 en adelante**, porque las Mac duran
   más y siguen siendo reparables.
 - **Precios en dólares (USD)**, no en pesos. El usuario pidió en algún momento evaluar
@@ -38,7 +39,11 @@ visual, no los activos de marca.
 - Batería es un ítem simple (un solo precio por modelo), **no** tiene variantes tipo
   "estándar / alta capacidad" — eso se había armado como ejemplo antes de tener datos
   reales y se sacó al cargar la lista de precios real.
-- Pantalla y vidrio/tapa trasera de iPhone sí tienen variantes de repuesto (ver más abajo).
+- Solo pantalla de iPhone tiene variantes de repuesto (ver más abajo). Vidrio trasero es
+  un ítem simple, sin "solo vidrio" vs. "tapa completa" — se probó esa distinción y el
+  usuario pidió sacarla (tapa completa implicaría cambio de chasis, no se ofrece). Por
+  el momento tampoco tiene precios cargados (el usuario pidió sacarlos, "por el momento
+  no vamos a poner precios") — todos los modelos muestran "Consultar" para este servicio.
 
 ## Stack técnico
 
@@ -88,8 +93,8 @@ Todo en dólares, como números (el formateo "US$ 50" se hace al mostrar, con
 
 - **Servicios simples** (batería, cámara, puerto de carga, botones, diagnóstico):
   `PRICES["iphone"]["iPhone 13"]["bateria"] = 69`
-- **Servicios con opciones de repuesto** (pantalla y vidrio/tapa trasera, solo en
-  iPhone — ver `IPHONE_REPAIR_OPTIONS`): el valor es un objeto por opción:
+- **Servicios con opciones de repuesto** (por ahora, solo pantalla en iPhone — ver
+  `IPHONE_REPAIR_OPTIONS`): el valor es un objeto por opción:
   `PRICES["iphone"]["iPhone 13"]["pantalla"] = { oled: 144 }`
 
 Para pantalla, las opciones posibles son `oled`, `incell` (LCD) y `original` (repuesto
@@ -99,8 +104,13 @@ que tienen precio cargado para ese modelo puntual (ej. iPhone 11 base solo tiene
 precio cargado para ese servicio, se muestran todas las opciones con "Consultar" para
 no dejar la sección vacía (ver `getAvailableOptions()` en `main.js`).
 
-Para vidrio/tapa trasera las opciones son `solo-vidrio` (cambio de vidrio con láser) y
-`tapa-completa` (cambio de tapa entera) — hoy solo hay precios cargados de `solo-vidrio`.
+"Vidrio trasero" (`tapa-trasera`) es un servicio simple, sin variantes de repuesto —
+mismo patrón que batería: `PRICES["iphone"]["iPhone 13"]["tapa-trasera"] = 60`. No se
+ofrece cambio de tapa completa (a diferencia del vidrio, implicaría cambio de chasis;
+el usuario pidió explícitamente no ofrecerlo). Por ahora no hay ningún precio cargado
+para este servicio en ningún modelo (el usuario pidió sacarlos todos, "por el momento
+no vamos a poner precios") — muestra "Consultar" en toda la línea. Cuando el usuario
+pase la lista, cargarlos con el mismo patrón que batería.
 
 ## Pendiente — datos reales para cargar
 
@@ -117,16 +127,18 @@ Para vidrio/tapa trasera las opciones son `solo-vidrio` (cambio de vidrio con l�
 3. **Precios de iPad, Mac y Apple Watch**: sin catálogo. iPad y Mac muestran cotización
    directa (`SIMPLE_QUOTE_CATEGORIES`); Apple Watch ya tiene el listado de servicios
    pero sin ningún precio cargado (todo "Consultar").
-4. **Precios de vidrio/tapa trasera de iPhone 15, 15 Plus, 16 Plus, 16 Pro**: no se
-   pasaron en la primera lista (quedan en "Consultar").
-5. **Tapa completa** (a diferencia de "solo vidrio"): sin precios en ningún modelo.
-6. **Batería de iPhone 16 y 17 (todas las variantes)**: no falta cargar el dato — según
+4. **Precios de vidrio trasero (`tapa-trasera`), todos los modelos de iPhone**: se habían
+   cargado (con precios reales que había dado el usuario) y después se sacaron a pedido
+   explícito del usuario ("por el momento no vamos a poner precios, sacalos" — "todos").
+   Hoy no hay ningún precio cargado para este servicio; muestra "Consultar" en toda la
+   línea. Cargarlos cuando el usuario los vuelva a pasar.
+5. **Batería de iPhone 16 y 17 (todas las variantes)**: no falta cargar el dato — según
    el usuario, todavía no hay repuesto de batería compatible en plaza para esos modelos
    por ser muy nuevos. Se agrega cuando exista el repuesto, no antes.
-7. **Dólar blue / Ámbito**: pospuesto a pedido del usuario (ver reglas de negocio arriba).
-8. Imágenes reales del local/trabajos (hoy no hay fotos, todo es ícono/emoji para
+6. **Dólar blue / Ámbito**: pospuesto a pedido del usuario (ver reglas de negocio arriba).
+7. Imágenes reales del local/trabajos (hoy no hay fotos, todo es ícono/emoji para
    evitar usar imágenes con derechos de Apple).
-9. Definir dominio propio y dónde hostear (GitHub Pages, Netlify, hosting compartido, etc.).
+8. Definir dominio propio y dónde hostear (GitHub Pages, Netlify, hosting compartido, etc.).
 
 ## Convenciones
 
