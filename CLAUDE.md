@@ -64,7 +64,8 @@ iphone.html            Página de categoría iPhone (modelos agrupados + reparac
 ipad.html               Página de categoría iPad (pantalla + batería, mismo flujo que iPhone)
 mac.html                Página de categoría Mac (cotización directa)
 watch.html              Página de categoría Apple Watch
-contacto.html           Página de contacto (WhatsApp, teléfono, email, horarios, redes)
+contacto.html           Página de contacto (WhatsApp, teléfono, email, dirección con
+                        link "Cómo llegar" y mapa embebido, horarios, redes)
 css/styles.css          Estilos (glass/"Cristal": blur, translucidez, paleta, componentes)
 js/config.js            Datos generales del negocio (nombre, WhatsApp, teléfono, email, etc.)
 js/models-data.js       Modelos, grupos de modelos, servicios, opciones de repuesto y PRICES

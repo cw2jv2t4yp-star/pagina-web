@@ -25,6 +25,12 @@ function applyContactData() {
   document.querySelectorAll("[data-address]").forEach((el) => {
     el.textContent = CONFIG.address;
   });
+  document.querySelectorAll("[data-maps-link]").forEach((el) => {
+    el.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONFIG.address)}`;
+  });
+  document.querySelectorAll("[data-map-embed]").forEach((el) => {
+    el.src = `https://www.google.com/maps?q=${encodeURIComponent(CONFIG.address)}&output=embed`;
+  });
   document.querySelectorAll("[data-hours]").forEach((el) => {
     el.textContent = CONFIG.hours;
   });
