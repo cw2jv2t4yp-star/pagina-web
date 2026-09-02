@@ -109,10 +109,13 @@ Para vidrio/tapa trasera las opciones son `solo-vidrio` (cambio de vidrio con l�
 4. **Precios de vidrio/tapa trasera de iPhone 15, 15 Plus, 16 Plus, 16 Pro**: no se
    pasaron en la primera lista (quedan en "Consultar").
 5. **Tapa completa** (a diferencia de "solo vidrio"): sin precios en ningún modelo.
-6. **Dólar blue / Ámbito**: pospuesto a pedido del usuario (ver reglas de negocio arriba).
-7. Imágenes reales del local/trabajos (hoy no hay fotos, todo es ícono/emoji para
+6. **Batería de iPhone 16 y 17 (todas las variantes)**: no falta cargar el dato — según
+   el usuario, todavía no hay repuesto de batería compatible en plaza para esos modelos
+   por ser muy nuevos. Se agrega cuando exista el repuesto, no antes.
+7. **Dólar blue / Ámbito**: pospuesto a pedido del usuario (ver reglas de negocio arriba).
+8. Imágenes reales del local/trabajos (hoy no hay fotos, todo es ícono/emoji para
    evitar usar imágenes con derechos de Apple).
-8. Definir dominio propio y dónde hostear (GitHub Pages, Netlify, hosting compartido, etc.).
+9. Definir dominio propio y dónde hostear (GitHub Pages, Netlify, hosting compartido, etc.).
 
 ## Convenciones
 
