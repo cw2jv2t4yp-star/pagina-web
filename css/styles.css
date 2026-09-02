@@ -827,6 +827,9 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .footer__links a { color: var(--gray); }
 .footer__links a:hover { text-decoration: underline; }
 
+.footer__maps-link { text-decoration: underline; }
+.footer__maps-link:hover { color: var(--near-black); }
+
 /* ============================================================
    Utilidades
    ============================================================ */
