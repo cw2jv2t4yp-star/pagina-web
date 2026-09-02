@@ -220,30 +220,30 @@ function initCategoryPage(categoryKey) {
               .join("");
             const isOpen = openOptionServices.has(s.id);
             return `
-              <div class="repair-item repair-item--expandable">
-                <div class="repair-item__icon">${s.icon}</div>
-                <div class="repair-item__body">
-                  <button class="repair-item__toggle${isOpen ? " is-open" : ""}" data-toggle-options="${s.id}">
+              <div class="repair-card">
+                <button class="repair-item" data-toggle-options="${s.id}" aria-expanded="${isOpen}">
+                  <div class="repair-item__icon">${s.icon}</div>
+                  <div class="repair-item__body">
                     <h4>${s.label}</h4>
-                    <span class="repair-item__toggle-arrow">▾</span>
-                  </button>
-                  <p>${s.desc}</p>
-                  <div class="repair-options" id="options-${s.id}" ${isOpen ? "" : "hidden"}>${cards}</div>
-                </div>
+                    <p>${s.desc}</p>
+                  </div>
+                  <span class="repair-item__toggle-arrow${isOpen ? " is-open" : ""}">▾</span>
+                </button>
+                <div class="repair-options" id="options-${s.id}" ${isOpen ? "" : "hidden"}>${cards}</div>
               </div>`;
           }
           const price = formatPrice(getPrice(categoryKey, activeModel, s.id));
           const checked = isSelected(s.id, null);
           return `
-            <div class="repair-item">
-              <button class="repair-item__check${checked ? " is-checked" : ""}" data-select-service="${s.id}" aria-pressed="${checked}" aria-label="Incluir ${escapeHtml(s.label)} en el pedido"></button>
+            <button class="repair-item${checked ? " is-checked" : ""}" data-select-service="${s.id}" aria-pressed="${checked}">
+              <span class="repair-item__check${checked ? " is-checked" : ""}" aria-hidden="true"></span>
               <div class="repair-item__icon">${s.icon}</div>
               <div class="repair-item__body">
                 <h4>${s.label}</h4>
                 <p>${s.desc}</p>
                 <div class="repair-item__price${price ? "" : " is-empty"}">${price ? price : "Consultar"}</div>
               </div>
-            </div>`;
+            </button>`;
         })
         .join("");
 

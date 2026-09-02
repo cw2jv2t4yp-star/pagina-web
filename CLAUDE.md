@@ -91,8 +91,8 @@ cotización directa en vez del listado de servicios.
 Todo en dólares, como números (el formateo "US$ 50" se hace al mostrar, con
 `formatPrice()`). Dos formas según el servicio:
 
-- **Servicios simples** (batería, cámara, puerto de carga, botones, diagnóstico):
-  `PRICES["iphone"]["iPhone 13"]["bateria"] = 69`
+- **Servicios simples** (batería, vidrio trasero, cámara, puerto de carga, botones,
+  diagnóstico): `PRICES["iphone"]["iPhone 13"]["bateria"] = 69`
 - **Servicios con opciones de repuesto** (por ahora, solo pantalla en iPhone — ver
   `IPHONE_REPAIR_OPTIONS`): el valor es un objeto por opción:
   `PRICES["iphone"]["iPhone 13"]["pantalla"] = { oled: 144 }`
@@ -105,12 +105,15 @@ precio cargado para ese servicio, se muestran todas las opciones con "Consultar"
 no dejar la sección vacía (ver `getAvailableOptions()` en `main.js`).
 
 "Vidrio trasero" (`tapa-trasera`) es un servicio simple, sin variantes de repuesto —
-mismo patrón que batería: `PRICES["iphone"]["iPhone 13"]["tapa-trasera"] = 60`. No se
-ofrece cambio de tapa completa (a diferencia del vidrio, implicaría cambio de chasis;
-el usuario pidió explícitamente no ofrecerlo). Por ahora no hay ningún precio cargado
-para este servicio en ningún modelo (el usuario pidió sacarlos todos, "por el momento
-no vamos a poner precios") — muestra "Consultar" en toda la línea. Cuando el usuario
-pase la lista, cargarlos con el mismo patrón que batería.
+mismo patrón que batería. No se ofrece cambio de tapa completa (a diferencia del
+vidrio, implicaría cambio de chasis; el usuario pidió explícitamente no ofrecerlo).
+
+**Por ahora `PRICES.iphone` está vacío (`{}`)**: el usuario pidió sacar todos los
+precios del sitio ("te repito, sacar los precios" → confirmó que era para todos, no
+solo vidrio trasero) — pantalla, batería, todo. Todas las páginas muestran "Consultar"
+en cada línea hasta que pase una lista de precios definitiva. Al cargarla, restaurar
+el mismo patrón que antes: `PRICES["iphone"]["<modelo>"]["<servicio>"] = número` (o
+`{ oled: número, ... }` para pantalla).
 
 ## Pendiente — datos reales para cargar
 
@@ -127,12 +130,14 @@ pase la lista, cargarlos con el mismo patrón que batería.
 3. **Precios de iPad, Mac y Apple Watch**: sin catálogo. iPad y Mac muestran cotización
    directa (`SIMPLE_QUOTE_CATEGORIES`); Apple Watch ya tiene el listado de servicios
    pero sin ningún precio cargado (todo "Consultar").
-4. **Precios de vidrio trasero (`tapa-trasera`), todos los modelos de iPhone**: se habían
-   cargado (con precios reales que había dado el usuario) y después se sacaron a pedido
-   explícito del usuario ("por el momento no vamos a poner precios, sacalos" — "todos").
-   Hoy no hay ningún precio cargado para este servicio; muestra "Consultar" en toda la
-   línea. Cargarlos cuando el usuario los vuelva a pasar.
-5. **Batería de iPhone 16 y 17 (todas las variantes)**: no falta cargar el dato — según
+4. **Precios de iPhone, todos los servicios y modelos**: se habían cargado (con precios
+   reales que había dado el usuario) y después se sacaron por completo a pedido
+   explícito del usuario ("te repito, sacar los precios" → confirmó que era para
+   pantalla y batería también, no solo vidrio trasero). Hoy `PRICES.iphone` está vacío
+   y toda la página muestra "Consultar". Cargarlos cuando el usuario pase la lista
+   definitiva (`PRICES["iphone"]["<modelo>"]["<servicio>"] = número`, u `{ oled: N, ... }`
+   para pantalla).
+5. **Batería de iPhone 16 y 17 (todas las variantes)**: además de lo anterior, según
    el usuario, todavía no hay repuesto de batería compatible en plaza para esos modelos
    por ser muy nuevos. Se agrega cuando exista el repuesto, no antes.
 6. **Dólar blue / Ámbito**: pospuesto a pedido del usuario (ver reglas de negocio arriba).

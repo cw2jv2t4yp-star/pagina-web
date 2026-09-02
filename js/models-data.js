@@ -193,40 +193,11 @@ const MODEL_HELP = {
 //       PRICES["iphone"]["iPhone 13"]["pantalla"] = { oled: 144 }
 //     Si un modelo no tiene cargada una opción (ej. no tiene "incell"), esa
 //     opción no se ofrece para ese modelo y no aparece en la página.
+//
+// A pedido del usuario, por el momento no hay ningún precio cargado (todo
+// muestra "Consultar") — se vuelven a cargar cuando pase la lista definitiva.
 const PRICES = {
-  iphone: {
-    "iPhone 11": { pantalla: { incell: 50 }, bateria: 50 },
-    "iPhone 11 Pro": { pantalla: { oled: 95 }, bateria: 54 },
-    "iPhone 11 Pro Max": { pantalla: { oled: 110 }, bateria: 68 },
-
-    "iPhone 12 mini": { pantalla: { oled: 120 }, bateria: 50 },
-    "iPhone 12": { pantalla: { oled: 130 }, bateria: 60 },
-    "iPhone 12 Pro": { pantalla: { oled: 130 }, bateria: 60 },
-    "iPhone 12 Pro Max": { pantalla: { oled: 146 }, bateria: 65 },
-
-    "iPhone 13 mini": { pantalla: { oled: 146 }, bateria: 68 },
-    "iPhone 13": { pantalla: { oled: 144 }, bateria: 69 },
-    "iPhone 13 Pro": { pantalla: { oled: 170 }, bateria: 75 },
-    "iPhone 13 Pro Max": { pantalla: { oled: 180 }, bateria: 90 },
-
-    "iPhone 14": { pantalla: { oled: 140 }, bateria: 78 },
-    "iPhone 14 Plus": { pantalla: { oled: 150 }, bateria: 81 },
-    "iPhone 14 Pro": { pantalla: { oled: 160, original: 390 }, bateria: 87 },
-    "iPhone 14 Pro Max": { pantalla: { oled: 170 }, bateria: 93 },
-
-    "iPhone 15": { pantalla: { oled: 166 }, bateria: 78 },
-    "iPhone 15 Plus": { pantalla: { oled: 210 }, bateria: 84 },
-    "iPhone 15 Pro": { pantalla: { oled: 168 }, bateria: 87 },
-    "iPhone 15 Pro Max": { pantalla: { oled: 170 }, bateria: 99 },
-
-    "iPhone 16": { pantalla: { oled: 170 } },
-    "iPhone 16 Plus": { pantalla: { oled: 180 } },
-    "iPhone 16 Pro": { pantalla: { oled: 300 } },
-    "iPhone 16 Pro Max": { pantalla: { oled: 350 } },
-
-    "iPhone 17 Pro": { pantalla: { oled: 300 } },
-    "iPhone 17 Pro Max": { pantalla: { oled: 350, original: 650 } },
-  },
+  iphone: {},
 };
 
 /** Precio de un servicio simple (sin opciones de repuesto), o null si no está cargado. */

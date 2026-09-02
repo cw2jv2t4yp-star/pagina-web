@@ -624,16 +624,25 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 14px;
+  align-items: start;
 }
 
+/* .repair-item: toda la fila es clickeable (sea para tildar el servicio o para
+   desplegar sus opciones) — no hay que acertarle a un cuadradito chico. */
 .repair-item {
+  width: 100%;
   background: var(--white);
   border-radius: 14px;
   padding: 20px;
   display: flex;
   gap: 14px;
   align-items: flex-start;
+  text-align: left;
+  color: var(--near-black);
+  transition: box-shadow .15s;
 }
+.repair-item:hover { box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) inset; }
+.repair-item.is-checked { box-shadow: 0 0 0 2px var(--accent) inset; }
 
 .repair-item__check {
   flex-shrink: 0;
@@ -646,7 +655,6 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   background: transparent;
   transition: background .15s, border-color .15s;
 }
-.repair-item__check:hover { border-color: var(--accent); }
 .repair-item__check.is-checked { background: var(--accent); border-color: var(--accent); }
 .repair-item__check.is-checked::after {
   content: "✓";
@@ -670,23 +678,33 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 }
 .repair-item__price.is-empty { color: var(--gray-dark); font-weight: 500; }
 
-.repair-item__toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  text-align: left;
-  color: var(--near-black);
+/* Servicios con opciones de repuesto (ej. Pantalla): la tarjeta contiene el
+   botón que despliega las opciones, más el panel de opciones como hermano
+   (no adentro del botón, para que cada opción pueda tener su propio checkbox). */
+.repair-card {
+  background: var(--white);
+  border-radius: 14px;
+  overflow: hidden;
 }
-.repair-item__toggle-arrow { transition: transform .15s; color: var(--gray-dark); }
-.repair-item__toggle.is-open .repair-item__toggle-arrow { transform: rotate(180deg); }
+.repair-card .repair-item {
+  border-radius: 0;
+}
+.repair-card .repair-item.is-checked { box-shadow: none; }
+
+.repair-item__toggle-arrow {
+  flex-shrink: 0;
+  align-self: center;
+  transition: transform .15s;
+  color: var(--gray-dark);
+}
+.repair-item__toggle-arrow.is-open { transform: rotate(180deg); }
 
 .repair-options[hidden] { display: none; }
 
 .repair-options {
   display: grid;
   gap: 12px;
-  margin-top: 14px;
+  padding: 0 20px 20px;
 }
 
 .option-card {
