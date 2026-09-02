@@ -104,9 +104,13 @@ Para vidrio/tapa trasera las opciones son `solo-vidrio` (cambio de vidrio con l�
 
 ## Pendiente — datos reales para cargar
 
-1. **`js/config.js`**: nombre del negocio ya confirmado como **"Inkblot"**. Falta cargar
-   el resto: número de WhatsApp real, teléfono, email (hoy es un placeholder inventado,
-   `contacto@inkblot.com.ar`, sin confirmar), dirección, horarios, redes sociales.
+1. **`js/config.js`**: datos de contacto ya cargados desde la página oficial
+   (inkblot.pro) — teléfono, email, dirección y horarios son reales. Dos cosas para
+   confirmar: (a) el número de WhatsApp se cargó como `5491158873498` (se le agregó el
+   "9" después del 54, como suelen necesitar los links wa.me para números argentinos),
+   pero en la página oficial figura sin el 9 (`+54 11 5887-3498`) — probar que el botón
+   de WhatsApp abra bien y avisar si no; (b) no se encontraron Instagram/Facebook en la
+   página oficial, así que esos dos campos siguen siendo placeholders sin confirmar.
 2. **Tiempos de espera**: no hay ningún dato cargado todavía (el usuario dijo que lo
    iba a pasar más adelante). Por ahora todas las opciones de repuesto muestran
    "Tiempo: A confirmar" fijo en `renderOptionCard()`.
