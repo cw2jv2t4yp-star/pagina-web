@@ -119,7 +119,7 @@ function renderOptionCard(opt, priceAmount, checkbox) {
       ${checkHtml}
       <h5>${escapeHtml(opt.name)}</h5>
       <p class="option-card__tech">${escapeHtml(opt.tech)}</p>
-      ${pros ? `<p class="option-card__label option-card__label--pro">Puntos a favor</p><ul class="option-card__list">${pros}</ul>` : ""}
+      ${pros ? `<ul class="option-card__list">${pros}</ul>` : ""}
       <div class="option-card__meta">
         <span>Precio: ${price ? price : "Consultar"}</span>
         <span>Tiempo: A confirmar</span>
