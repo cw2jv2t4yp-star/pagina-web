@@ -382,12 +382,21 @@ function initFinder() {
     return `<button class="finder__back" id="finder-back">‹ Volver</button>`;
   }
 
+  // El indicador siempre muestra 3 pasos fijos (Producto → Modelo → Reparación),
+  // sin importar cuántas pantallas internas tenga el paso 3 (qué se rompió, tipo
+  // de repuesto, síntoma son todas parte de "Reparación", no pasos nuevos).
+  function progressPhase(step) {
+    if (step === "category") return 0;
+    if (step === "model") return 1;
+    if (["service", "option", "symptom"].includes(step)) return 2;
+    return -1; // "cart" y "result" quedan fuera del indicador, como antes
+  }
+
   function render() {
     const progressEl = document.getElementById("finder-progress");
     const bodyEl = document.getElementById("finder-body");
-    const steps = getSteps();
-    const currentIdx = steps.indexOf(state.step);
-    const total = steps.length;
+    const currentIdx = progressPhase(state.step);
+    const total = 3;
 
     if (currentIdx === -1) {
       progressEl.innerHTML = "";
