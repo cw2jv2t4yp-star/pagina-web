@@ -406,6 +406,14 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   padding-right: 4px;
 }
 
+.finder__model-groups {
+  max-width: 480px;
+  margin: 0 auto;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
 .finder__option {
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(12px);
@@ -456,12 +464,50 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
    Selector de modelos (páginas de categoría)
    ============================================================ */
 .model-tabs {
+  max-width: 640px;
+  margin: 0 auto 40px;
+}
+
+.model-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.model-group__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  transition: background .15s, border-color .15s;
+}
+.model-group__header:hover { background: rgba(255, 255, 255, 0.85); }
+.model-group__header.has-active { border-color: var(--near-black); }
+
+.model-group__label { flex: 1; }
+.model-group__count { font-size: 12px; font-weight: 400; color: var(--gray-dark); white-space: nowrap; }
+.model-group__arrow { color: var(--gray-dark); transition: transform .15s; }
+.model-group__arrow.is-open { transform: rotate(180deg); }
+
+.model-group__models[hidden] { display: none; }
+.model-group__models {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: center;
-  margin-bottom: 40px;
+  padding: 10px 4px 2px 18px;
 }
+
+.model-tab--other { display: block; width: 100%; text-align: center; margin-top: 6px; }
 
 .model-tab {
   padding: 9px 16px;
@@ -531,9 +577,6 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   color: var(--accent);
 }
 .repair-item__price.is-empty { color: var(--gray-dark); font-weight: 500; }
-
-.repair-item--expandable { flex-direction: column; }
-.repair-item--expandable .repair-item__icon { display: none; }
 
 .repair-item__toggle {
   display: flex;

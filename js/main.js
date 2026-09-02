@@ -64,6 +64,43 @@ function formatDeviceLabel(category, model) {
   return `${meta.label} ${model}`;
 }
 
+/**
+ * Dibuja la lista de modelos agrupada por generación/línea (ej: "iPhone 16"
+ * con sus 5 variantes adentro), en vez de una lista plana larga. Cada grupo
+ * es un acordeón: se abre el grupo al que pertenece el modelo activo.
+ * El llamador es responsable de conectar los listeners de [data-group-index]
+ * y [data-model] sobre el contenedor donde se inyecta este HTML.
+ */
+function renderModelGroups(category, activeModel, openIndex) {
+  const groups = MODEL_GROUPS[category] || [];
+  const groupsHtml = groups
+    .map((g, i) => {
+      const isOpen = i === openIndex;
+      const hasActive = g.models.includes(activeModel);
+      return `
+        <div class="model-group">
+          <button class="model-group__header${hasActive ? " has-active" : ""}" data-group-index="${i}">
+            <span class="model-group__label">${escapeHtml(g.label)}</span>
+            <span class="model-group__count">${g.models.length} modelo${g.models.length === 1 ? "" : "s"}</span>
+            <span class="model-group__arrow${isOpen ? " is-open" : ""}">▾</span>
+          </button>
+          <div class="model-group__models" ${isOpen ? "" : "hidden"}>
+            ${g.models.map((m) => `<button class="model-tab${m === activeModel ? " is-active" : ""}" data-model="${escapeHtml(m)}">${escapeHtml(m)}</button>`).join("")}
+          </div>
+        </div>`;
+    })
+    .join("");
+  const otherActive = activeModel === OTHER_MODEL_LABEL;
+  return `<div class="model-groups">${groupsHtml}</div>
+    <button class="model-tab model-tab--other${otherActive ? " is-active" : ""}" data-model="${OTHER_MODEL_LABEL}">${OTHER_MODEL_LABEL}</button>`;
+}
+
+/** Índice del grupo al que pertenece un modelo (-1 si es "otro modelo" o no se encuentra). */
+function findGroupIndex(category, model) {
+  const groups = MODEL_GROUPS[category] || [];
+  return groups.findIndex((g) => g.models.includes(model));
+}
+
 function renderOptionCard(opt) {
   const pros = opt.pros.map((p) => `<li>${escapeHtml(p)}</li>`).join("");
   const cons = opt.cons.map((c) => `<li>${escapeHtml(c)}</li>`).join("");
@@ -89,22 +126,33 @@ function renderOptionCard(opt) {
  * la lista de servicios muestran un cartel de "cotizá tu equipo" directo.
  */
 function initCategoryPage(categoryKey) {
-  const models = MODELS[categoryKey] || [];
+  const groups = MODEL_GROUPS[categoryKey] || [];
   const serviceIds = SERVICES_BY_CATEGORY[categoryKey] || [];
   const meta = CATEGORY_META[categoryKey];
   const tabsEl = document.getElementById("model-tabs");
   const panelEl = document.getElementById("model-panel");
-  if (!tabsEl || !panelEl || models.length === 0) return;
+  if (!tabsEl || !panelEl || groups.length === 0) return;
 
-  let activeModel = models[0];
+  let activeModel = groups[0].models[0];
+  let openGroupIndex = 0;
 
   function render() {
-    tabsEl.innerHTML = models
-      .map(
-        (model) =>
-          `<button class="model-tab${model === activeModel ? " is-active" : ""}" data-model="${escapeHtml(model)}">${escapeHtml(model)}</button>`
-      )
-      .join("");
+    tabsEl.innerHTML = renderModelGroups(categoryKey, activeModel, openGroupIndex);
+
+    tabsEl.querySelectorAll("[data-group-index]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.dataset.groupIndex);
+        openGroupIndex = openGroupIndex === idx ? -1 : idx;
+        render();
+      });
+    });
+    tabsEl.querySelectorAll("[data-model]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeModel = btn.dataset.model;
+        openGroupIndex = findGroupIndex(categoryKey, activeModel);
+        render();
+      });
+    });
 
     if (SIMPLE_QUOTE_CATEGORIES.includes(categoryKey)) {
       panelEl.innerHTML = `
@@ -166,13 +214,6 @@ function initCategoryPage(categoryKey) {
         });
       });
     }
-
-    tabsEl.querySelectorAll(".model-tab").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        activeModel = btn.dataset.model;
-        render();
-      });
-    });
   }
 
   render();
@@ -195,7 +236,7 @@ function initFinder() {
   const root = document.getElementById("finder");
   if (!root) return;
 
-  const state = { step: "category", category: null, model: null, serviceId: null, optionId: null, symptom: null };
+  const state = { step: "category", category: null, model: null, serviceId: null, optionId: null, symptom: null, openGroupIndex: 0 };
 
   // Orden de pasos según lo que ya se sabe del estado actual (se recalcula en cada render,
   // así que se va ajustando a medida que el usuario elige categoría/servicio).
@@ -226,6 +267,7 @@ function initFinder() {
     state.serviceId = null;
     state.optionId = null;
     state.symptom = null;
+    state.openGroupIndex = 0;
     render();
   }
 
@@ -269,6 +311,7 @@ function initFinder() {
         btn.addEventListener("click", () => {
           state.category = btn.dataset.category;
           state.step = "model";
+          state.openGroupIndex = 0;
           render();
         });
       });
@@ -277,21 +320,25 @@ function initFinder() {
 
     if (state.step === "model") {
       const meta = CATEGORY_META[state.category];
-      const models = MODELS[state.category] || [];
       const help = MODEL_HELP[state.category] || "";
       bodyEl.innerHTML = `
         ${backButton()}
         <h3 class="finder__title">¿Qué modelo de ${meta.label} es?</h3>
         <button class="finder__help-toggle" id="finder-help-toggle" type="button">¿No sabés cuál es tu modelo? Tocá acá ›</button>
         <div class="finder__help" id="finder-help" hidden>${help}</div>
-        <div class="finder__grid finder__grid--models">
-          ${models.map((m) => `<button class="finder__option finder__option--compact" data-model="${escapeHtml(m)}">${escapeHtml(m)}</button>`).join("")}
-        </div>`;
+        <div class="finder__model-groups">${renderModelGroups(state.category, state.model, state.openGroupIndex)}</div>`;
       document.getElementById("finder-back").addEventListener("click", goBack);
       document.getElementById("finder-help-toggle").addEventListener("click", (e) => {
         const helpEl = document.getElementById("finder-help");
         helpEl.hidden = !helpEl.hidden;
         e.currentTarget.textContent = helpEl.hidden ? "¿No sabés cuál es tu modelo? Tocá acá ›" : "Ocultar ayuda ‹";
+      });
+      bodyEl.querySelectorAll("[data-group-index]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.dataset.groupIndex);
+          state.openGroupIndex = state.openGroupIndex === idx ? -1 : idx;
+          render();
+        });
       });
       bodyEl.querySelectorAll("[data-model]").forEach((btn) => {
         btn.addEventListener("click", () => {

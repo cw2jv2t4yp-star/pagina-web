@@ -20,45 +20,52 @@ const SERVICES = [
   { id: "diagnostico", label: "Diagnóstico", desc: "Diagnóstico técnico general del equipo.", icon: "🔍" },
 ];
 
-// Modelos por categoría. Se puede seguir agregando modelos nuevos a cada array.
+// Modelos por categoría, agrupados por generación/línea para no mostrar una
+// lista larga y plana (el usuario toca "iPhone 16" y ahí se despliegan los
+// modelos de esa generación). Se puede seguir agregando modelos nuevos a
+// cada grupo, o grupos nuevos a cada categoría.
 // Criterio: iPhone/iPad/Watch desde ~2019 en adelante (iPhone 11 y equivalentes).
 // Mac desde 2012 en adelante (las Mac duran más y siguen siendo reparables).
 // No se incluyen modelos más viejos que esos porque no se reparan.
-const MODELS = {
+const OTHER_MODEL_LABEL = "Otro modelo / no listado";
+
+const MODEL_GROUPS = {
   iphone: [
-    "iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16", "iPhone 16e",
-    "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
-    "iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14",
-    "iPhone 13 Pro Max", "iPhone 13 Pro", "iPhone 13", "iPhone 13 mini",
-    "iPhone SE (3ª gen., 2022)", "iPhone SE (2ª gen., 2020)",
-    "iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 mini",
-    "iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11",
-    "Otro modelo / no listado",
+    { label: "iPhone 16", models: ["iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16", "iPhone 16e"] },
+    { label: "iPhone 15", models: ["iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15"] },
+    { label: "iPhone 14", models: ["iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14"] },
+    { label: "iPhone 13", models: ["iPhone 13 Pro Max", "iPhone 13 Pro", "iPhone 13", "iPhone 13 mini"] },
+    { label: "iPhone SE", models: ["iPhone SE (3ª gen., 2022)", "iPhone SE (2ª gen., 2020)"] },
+    { label: "iPhone 12", models: ["iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 mini"] },
+    { label: "iPhone 11", models: ["iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11"] },
   ],
   ipad: [
-    "iPad Pro 13\" (M4)", "iPad Pro 11\" (M4)",
-    "iPad Air 13\" (M2)", "iPad Air 11\" (M2)",
-    "iPad (10ª gen.)", "iPad (9ª gen.)", "iPad (8ª/7ª gen.)",
-    "iPad mini (7ª gen.)", "iPad mini (6ª gen.)", "iPad mini (5ª gen., 2019)",
-    "iPad Pro (2018-2022, otros tamaños)", "iPad Air (2019-2022, otros tamaños)",
-    "Otro modelo / no listado",
+    { label: "iPad Pro", models: ["iPad Pro 13\" (M4)", "iPad Pro 11\" (M4)", "iPad Pro (2018-2022, otros tamaños)"] },
+    { label: "iPad Air", models: ["iPad Air 13\" (M2)", "iPad Air 11\" (M2)", "iPad Air (2019-2022, otros tamaños)"] },
+    { label: "iPad", models: ["iPad (10ª gen.)", "iPad (9ª gen.)", "iPad (8ª/7ª gen.)"] },
+    { label: "iPad mini", models: ["iPad mini (7ª gen.)", "iPad mini (6ª gen.)", "iPad mini (5ª gen., 2019)"] },
   ],
   mac: [
-    "MacBook Pro 16\" (M4)", "MacBook Pro 14\" (M4)",
-    "MacBook Air 15\"", "MacBook Air 13\"",
-    "MacBook Pro (M1/M2/M3, otros tamaños)", "MacBook Air (M1/M2, otros tamaños)",
-    "MacBook Pro/Air (Intel, 2016-2020)",
-    "MacBook Pro/Air (Intel, 2012-2015)",
-    "Otro modelo / no listado",
+    { label: "MacBook Pro (Apple Silicon)", models: ["MacBook Pro 16\" (M4)", "MacBook Pro 14\" (M4)", "MacBook Pro (M1/M2/M3, otros tamaños)"] },
+    { label: "MacBook Air (Apple Silicon)", models: ["MacBook Air 15\"", "MacBook Air 13\"", "MacBook Air (M1/M2, otros tamaños)"] },
+    { label: "MacBook (Intel)", models: ["MacBook Pro/Air (Intel, 2016-2020)", "MacBook Pro/Air (Intel, 2012-2015)"] },
   ],
   watch: [
-    "Apple Watch Ultra 2", "Apple Watch Series 10",
-    "Apple Watch SE (2ª gen.)", "Apple Watch SE (1ª gen.)",
-    "Apple Watch Series 9", "Apple Watch Series 8", "Apple Watch Series 7",
-    "Apple Watch Series 6", "Apple Watch Series 5",
-    "Otro modelo / no listado",
+    { label: "Apple Watch Ultra", models: ["Apple Watch Ultra 2"] },
+    { label: "Apple Watch (recientes)", models: ["Apple Watch Series 10", "Apple Watch Series 9", "Apple Watch Series 8", "Apple Watch Series 7"] },
+    { label: "Apple Watch SE", models: ["Apple Watch SE (2ª gen.)", "Apple Watch SE (1ª gen.)"] },
+    { label: "Apple Watch (anteriores)", models: ["Apple Watch Series 6", "Apple Watch Series 5"] },
   ],
 };
+
+// Lista plana por categoría, derivada de MODEL_GROUPS + la opción "otro modelo".
+// Se usa donde hace falta la lista completa sin agrupar.
+const MODELS = Object.fromEntries(
+  Object.keys(MODEL_GROUPS).map((cat) => [
+    cat,
+    [...MODEL_GROUPS[cat].flatMap((g) => g.models), OTHER_MODEL_LABEL],
+  ])
+);
 
 // Datos de presentación de cada categoría (usados en el buscador guiado de la home).
 const CATEGORY_META = {
