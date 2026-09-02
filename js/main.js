@@ -110,7 +110,6 @@ function findGroupIndex(category, model) {
  */
 function renderOptionCard(opt, priceAmount, checkbox) {
   const pros = opt.pros.map((p) => `<li>${escapeHtml(p)}</li>`).join("");
-  const cons = opt.cons.map((c) => `<li>${escapeHtml(c)}</li>`).join("");
   const price = formatPrice(priceAmount);
   const checkHtml = checkbox
     ? `<button class="option-card__check${checkbox.checked ? " is-checked" : ""}" data-select-service="${checkbox.serviceId}" data-select-option="${opt.id}" aria-pressed="${checkbox.checked}" aria-label="Incluir ${escapeHtml(opt.name)} en el pedido"></button>`
@@ -121,7 +120,6 @@ function renderOptionCard(opt, priceAmount, checkbox) {
       <h5>${escapeHtml(opt.name)}</h5>
       <p class="option-card__tech">${escapeHtml(opt.tech)}</p>
       ${pros ? `<p class="option-card__label option-card__label--pro">Puntos a favor</p><ul class="option-card__list">${pros}</ul>` : ""}
-      ${cons ? `<p class="option-card__label option-card__label--con">Puntos en contra</p><ul class="option-card__list">${cons}</ul>` : ""}
       <div class="option-card__meta">
         <span>Precio: ${price ? price : "Consultar"}</span>
         <span>Tiempo: A confirmar</span>
