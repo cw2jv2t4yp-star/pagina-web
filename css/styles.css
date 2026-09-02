@@ -341,7 +341,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   height: 28px;
   border-radius: 50%;
   background: var(--bg-light);
-  color: var(--gray-light);
+  color: var(--gray-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -449,7 +449,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   color: var(--accent);
   margin-bottom: 14px;
 }
-.finder__result-price.is-empty { color: var(--gray-light); font-size: 18px; font-weight: 500; }
+.finder__result-price.is-empty { color: var(--gray-dark); font-size: 18px; font-weight: 500; }
 .finder__result-note { color: var(--gray); font-size: 14px; margin-bottom: 24px; }
 
 /* ============================================================
@@ -530,7 +530,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   font-weight: 600;
   color: var(--accent);
 }
-.repair-item__price.is-empty { color: var(--gray-light); font-weight: 400; }
+.repair-item__price.is-empty { color: var(--gray-dark); font-weight: 500; }
 
 .repair-item--expandable { flex-direction: column; }
 .repair-item--expandable .repair-item__icon { display: none; }
@@ -542,8 +542,10 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   width: 100%;
   text-align: left;
 }
-.repair-item__toggle-arrow { transition: transform .15s; color: var(--gray-light); }
+.repair-item__toggle-arrow { transition: transform .15s; color: var(--gray-dark); }
 .repair-item__toggle.is-open .repair-item__toggle-arrow { transform: rotate(180deg); }
+
+.repair-options[hidden] { display: none; }
 
 .repair-options {
   display: grid;
@@ -616,7 +618,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   text-align: center;
 }
 
-.contact-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--gray-light); text-transform: uppercase; letter-spacing: .04em; }
+.contact-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--gray-dark); text-transform: uppercase; letter-spacing: .04em; }
 .contact-item p, .contact-item a { font-size: 19px; }
 .contact-item a.accent { color: var(--accent); }
 
