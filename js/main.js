@@ -255,7 +255,27 @@ function initFinder() {
   const root = document.getElementById("finder");
   if (!root) return;
 
-  const state = { step: "category", category: null, model: null, serviceId: null, optionId: null, symptom: null, openGroupIndex: 0 };
+  const state = {
+    step: "category",
+    category: null,
+    model: null,
+    serviceId: null,
+    optionId: null,
+    symptom: null,
+    repairs: [], // reparaciones ya confirmadas para este mismo equipo: { serviceId, optionId, symptom }
+    openGroupIndex: 0,
+  };
+
+  /** Info para mostrar una reparación ya agregada al carrito (ícono, nombre, precio). */
+  function repairLineInfo(repair) {
+    const service = SERVICES.find((s) => s.id === repair.serviceId);
+    const option = repair.optionId ? (IPHONE_REPAIR_OPTIONS[repair.serviceId] || []).find((o) => o.id === repair.optionId) : null;
+    const label = option ? option.name : service.label;
+    const priceAmount = option
+      ? getOptionPrice(state.category, state.model, repair.serviceId, option.id)
+      : getPrice(state.category, state.model, repair.serviceId);
+    return { icon: service.icon, label, priceAmount };
+  }
 
   // Orden de pasos según lo que ya se sabe del estado actual (se recalcula en cada render,
   // así que se va ajustando a medida que el usuario elige categoría/servicio).
@@ -286,6 +306,7 @@ function initFinder() {
     state.serviceId = null;
     state.optionId = null;
     state.symptom = null;
+    state.repairs = [];
     state.openGroupIndex = 0;
     render();
   }
@@ -372,22 +393,38 @@ function initFinder() {
     if (state.step === "service") {
       const meta = CATEGORY_META[state.category];
       const serviceIds = SERVICES_BY_CATEGORY[state.category] || [];
-      const services = SERVICES.filter((s) => serviceIds.includes(s.id));
+      const addedIds = state.repairs.map((r) => r.serviceId);
+      const services = SERVICES.filter((s) => serviceIds.includes(s.id) && !addedIds.includes(s.id));
+      const hasCart = state.repairs.length > 0;
       bodyEl.innerHTML = `
         ${backButton()}
-        <h3 class="finder__title">¿Qué se le rompió a tu ${meta.label}?</h3>
+        <h3 class="finder__title">${hasCart ? "¿Algo más se rompió?" : `¿Qué se le rompió a tu ${meta.label}?`}</h3>
         <p class="finder__subtitle">${escapeHtml(state.model)}</p>
-        <div class="finder__grid">
-          ${services
-            .map(
-              (s) => `<button class="finder__option" data-service="${s.id}">
-                <span class="finder__option-icon">${s.icon}</span>
-                <span>${s.label}</span>
-              </button>`
-            )
-            .join("")}
-        </div>`;
-      document.getElementById("finder-back").addEventListener("click", goBack);
+        ${
+          services.length > 0
+            ? `<div class="finder__grid">
+                ${services
+                  .map(
+                    (s) => `<button class="finder__option" data-service="${s.id}">
+                      <span class="finder__option-icon">${s.icon}</span>
+                      <span>${s.label}</span>
+                    </button>`
+                  )
+                  .join("")}
+              </div>`
+            : `<p class="finder__subtitle">Ya agregaste todas las reparaciones disponibles para este equipo.</p>`
+        }
+        ${hasCart ? `<div class="btn-row" style="margin-top:20px"><button class="btn btn--ghost" id="finder-go-cart">Ver lo que ya agregué</button></div>` : ""}`;
+      document.getElementById("finder-back").addEventListener("click", () => {
+        if (hasCart) {
+          state.step = "cart";
+          render();
+        } else {
+          goBack();
+        }
+      });
+      const goCartBtn = document.getElementById("finder-go-cart");
+      if (goCartBtn) goCartBtn.addEventListener("click", () => { state.step = "cart"; render(); });
       bodyEl.querySelectorAll("[data-service]").forEach((btn) => {
         btn.addEventListener("click", () => {
           state.serviceId = btn.dataset.service;
@@ -441,8 +478,57 @@ function initFinder() {
       document.getElementById("finder-back").addEventListener("click", goBack);
       bodyEl.querySelectorAll("[data-symptom]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          state.symptom = btn.dataset.symptom;
-          state.step = "result";
+          state.repairs.push({ serviceId: state.serviceId, optionId: state.optionId, symptom: btn.dataset.symptom });
+          state.serviceId = null;
+          state.optionId = null;
+          state.symptom = null;
+          state.step = "cart";
+          render();
+        });
+      });
+      return;
+    }
+
+    if (state.step === "cart") {
+      const meta = CATEGORY_META[state.category];
+      const items = state.repairs
+        .map((r, i) => {
+          const info = repairLineInfo(r);
+          const price = formatPrice(info.priceAmount);
+          return `
+            <div class="cart-item">
+              <span class="cart-item__icon">${info.icon}</span>
+              <div class="cart-item__body">
+                <h4>${info.label}</h4>
+                <p>"${escapeHtml(r.symptom)}"</p>
+              </div>
+              <span class="cart-item__price${price ? "" : " is-empty"}">${price ? price : "Consultar"}</span>
+              <button class="cart-item__remove" data-remove-index="${i}" aria-label="Quitar">✕</button>
+            </div>`;
+        })
+        .join("");
+      bodyEl.innerHTML = `
+        <h3 class="finder__title">Reparaciones agregadas</h3>
+        <p class="finder__subtitle">${meta.label} — ${escapeHtml(state.model)}</p>
+        <div class="cart-list">${items}</div>
+        <div class="btn-row" style="margin-top:20px">
+          <button class="btn btn--primary" id="finder-add-more">Agregar otra reparación</button>
+          <button class="btn btn--ghost" id="finder-go-result">Listo, ver resumen</button>
+        </div>`;
+      document.getElementById("finder-add-more").addEventListener("click", () => {
+        state.step = "service";
+        render();
+      });
+      document.getElementById("finder-go-result").addEventListener("click", () => {
+        state.step = "result";
+        render();
+      });
+      bodyEl.querySelectorAll("[data-remove-index]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.repairs.splice(Number(btn.dataset.removeIndex), 1);
+          if (state.repairs.length === 0) {
+            state.step = "service";
+          }
           render();
         });
       });
@@ -470,21 +556,34 @@ function initFinder() {
       return;
     }
 
-    const service = SERVICES.find((s) => s.id === state.serviceId);
-    const option = state.optionId ? (IPHONE_REPAIR_OPTIONS[state.serviceId] || []).find((o) => o.id === state.optionId) : null;
-    const serviceLabel = option ? option.name : service.label;
-    const priceAmount = option
-      ? getOptionPrice(state.category, state.model, state.serviceId, option.id)
-      : getPrice(state.category, state.model, state.serviceId);
-    const price = formatPrice(priceAmount);
-    const message = `Hola! Tengo un/a ${deviceLabel}.\nProblema: ${serviceLabel} — ${state.symptom}.\n¿Me pasás precio y tiempo de espera?`;
+    const lines = state.repairs.map((r, i) => ({ ...repairLineInfo(r), symptom: r.symptom, n: i + 1 }));
+    const allPriced = lines.every((l) => l.priceAmount != null);
+    const totalAmount = lines.reduce((sum, l) => sum + (l.priceAmount || 0), 0);
+
+    const itemsHtml = lines
+      .map((l) => {
+        const price = formatPrice(l.priceAmount);
+        return `
+          <div class="finder__result-item">
+            <span class="finder__result-item__icon">${l.icon}</span>
+            <div class="finder__result-item__body">
+              <h4>${l.label}</h4>
+              <p>"${escapeHtml(l.symptom)}"</p>
+            </div>
+            <span class="finder__result-item__price${price ? "" : " is-empty"}">${price ? price : "Consultar"}</span>
+          </div>`;
+      })
+      .join("");
+
+    const messageLines = lines.map((l) => `${l.n}) ${l.label} — ${l.symptom}`).join("\n");
+    const message = `Hola! Tengo un/a ${deviceLabel} y necesito estas reparaciones:\n${messageLines}\n¿Me pasás precio${lines.length > 1 ? "s" : ""} y tiempo de espera?`;
+
     bodyEl.innerHTML = `
       <div class="finder__result">
-        <div class="finder__result-icon">${service.icon}</div>
         <h3 class="finder__title">¡Listo!</h3>
-        <p class="finder__result-summary"><strong>${escapeHtml(deviceLabel)}</strong> — ${serviceLabel}</p>
-        <p class="finder__result-symptom">"${escapeHtml(state.symptom)}"</p>
-        <div class="finder__result-price${price ? "" : " is-empty"}">${price ? price : "Consultar precio"}</div>
+        <p class="finder__result-summary"><strong>${escapeHtml(deviceLabel)}</strong></p>
+        <div class="finder__result-items">${itemsHtml}</div>
+        <div class="finder__result-price${allPriced ? "" : " is-empty"}">${allPriced ? `Total: ${formatPrice(totalAmount)}` : "Consultar precio total"}</div>
         <p class="finder__result-note">Escribinos por WhatsApp con estos datos y te confirmamos precio y tiempo de espera.</p>
         <div class="btn-row">
           <a class="btn btn--primary" href="${whatsappLink(message)}" target="_blank" rel="noopener">Consultar por WhatsApp</a>

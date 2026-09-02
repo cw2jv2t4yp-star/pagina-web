@@ -462,6 +462,64 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .finder__result-price.is-empty { color: var(--gray-dark); font-size: 18px; font-weight: 500; }
 .finder__result-note { color: var(--gray); font-size: 14px; margin-bottom: 24px; }
 
+.finder__result-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+.finder__result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.finder__result-item__icon { font-size: 22px; }
+.finder__result-item__body { flex: 1; }
+.finder__result-item__body h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.finder__result-item__body p { font-size: 12px; color: var(--gray); font-style: italic; }
+.finder__result-item__price { font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+.finder__result-item__price.is-empty { color: var(--gray-dark); font-weight: 500; }
+
+/* Carrito de reparaciones agregadas (paso "cart" del buscador) */
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 480px;
+  margin: 0 auto 8px;
+  text-align: left;
+}
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.cart-item__icon { font-size: 22px; }
+.cart-item__body { flex: 1; }
+.cart-item__body h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; color: var(--near-black); }
+.cart-item__body p { font-size: 12px; color: var(--gray); font-style: italic; }
+.cart-item__price { font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+.cart-item__price.is-empty { color: var(--gray-dark); font-weight: 500; }
+.cart-item__remove {
+  font-size: 14px;
+  color: var(--gray-dark);
+  padding: 4px 6px;
+  border-radius: 50%;
+  transition: background .15s, color .15s;
+}
+.cart-item__remove:hover { background: rgba(0,0,0,.08); color: var(--near-black); }
+
 /* ============================================================
    Selector de modelos (páginas de categoría)
    ============================================================ */
