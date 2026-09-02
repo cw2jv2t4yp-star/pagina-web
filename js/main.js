@@ -236,7 +236,6 @@ function initCategoryPage(categoryKey) {
           const checked = isSelected(s.id, null);
           return `
             <button class="repair-item${checked ? " is-checked" : ""}" data-select-service="${s.id}" aria-pressed="${checked}">
-              <span class="repair-item__check${checked ? " is-checked" : ""}" aria-hidden="true"></span>
               <div class="repair-item__icon">${s.icon}</div>
               <div class="repair-item__body">
                 <h4>${s.label}</h4>
