@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iFix Service — Servicio técnico Apple</title>
+  <meta name="description" content="Reparación de iPhone, iPad, Mac y Apple Watch: pantalla, batería, tapa trasera, cámara y más." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__brand">
+        <svg class="nav__brand-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2a1 1 0 0 1 1 1v2.07a5.5 5.5 0 0 1 4 5.3V17a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3v-6.63a5.5 5.5 0 0 1 4-5.3V3a1 1 0 0 1 1-1Zm-2 8a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-4Z"/>
+        </svg>
+        <span data-business-name>iFix Service</span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="iphone.html">iPhone</a></li>
+        <li><a href="ipad.html">iPad</a></li>
+        <li><a href="mac.html">Mac</a></li>
+        <li><a href="watch.html">Apple Watch</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+      </ul>
+      <a class="nav__cta" data-whatsapp-link href="#" target="_blank" rel="noopener">Pedir turno</a>
+      <button class="nav__toggle" aria-label="Abrir menú">☰</button>
+    </div>
+  </nav>
+
+  <header class="hero hero--dark">
+    <div class="hero__eyebrow">Servicio técnico especializado</div>
+    <h1>Reparamos tus dispositivos Apple</h1>
+    <p>iPhone, iPad, Mac y Apple Watch. Pantalla, batería, cámara, tapa trasera y más — con repuestos de calidad y garantía.</p>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="#buscador">Buscar mi reparación</a>
+      <a class="btn btn--ghost" data-whatsapp-link href="#" target="_blank" rel="noopener">Consultar por WhatsApp</a>
+    </div>
+  </header>
+
+  <section class="section" id="buscador">
+    <div class="wrap">
+      <div class="section__head">
+        <h2>Buscá tu reparación en 3 pasos</h2>
+        <p>Elegí tu producto, el modelo y qué se rompió. Así de fácil.</p>
+      </div>
+      <div class="finder" id="finder">
+        <div class="finder__progress" id="finder-progress"></div>
+        <div class="finder__body" id="finder-body"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--gray" id="categorias">
+    <div class="wrap">
+      <div class="section__head">
+        <h2>O navegá por producto</h2>
+        <p>También podés entrar directo a la página de tu producto.</p>
+      </div>
+      <div class="category-grid">
+        <div class="category-card">
+          <div class="category-card__icon">📱</div>
+          <h3>iPhone</h3>
+          <p>Pantalla, batería, cámara, tapa trasera y más.</p>
+          <a class="btn btn--primary" href="iphone.html">Ver modelos</a>
+        </div>
+        <div class="category-card">
+          <div class="category-card__icon">📱</div>
+          <h3>iPad</h3>
+          <p>Pantalla, batería, puerto de carga y más.</p>
+          <a class="btn btn--primary" href="ipad.html">Ver modelos</a>
+        </div>
+        <div class="category-card">
+          <div class="category-card__icon">💻</div>
+          <h3>Mac</h3>
+          <p>MacBook Pro y Air: pantalla, batería y más.</p>
+          <a class="btn btn--primary" href="mac.html">Ver modelos</a>
+        </div>
+        <div class="category-card">
+          <div class="category-card__icon">⌚</div>
+          <h3>Apple Watch</h3>
+          <p>Pantalla, batería, botones y más.</p>
+          <a class="btn btn--primary" href="watch.html">Ver modelos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="wrap">
+      <div class="section__head">
+        <h2>Nuestros servicios</h2>
+        <p>Trabajamos todos los aspectos de reparación de tu equipo.</p>
+      </div>
+      <div class="service-grid">
+        <div class="service-card"><div class="service-card__icon">🖥️</div><h4>Pantalla</h4><p>Cambio de módulo de pantalla.</p></div>
+        <div class="service-card"><div class="service-card__icon">🔋</div><h4>Batería</h4><p>Reemplazo por baja duración o desgaste.</p></div>
+        <div class="service-card"><div class="service-card__icon">🔲</div><h4>Vidrio / Tapa trasera</h4><p>Cambio de vidrio o tapa rota.</p></div>
+        <div class="service-card"><div class="service-card__icon">📷</div><h4>Cámara</h4><p>Reparación de cámara trasera y frontal.</p></div>
+        <div class="service-card"><div class="service-card__icon">🔌</div><h4>Puerto de carga</h4><p>Limpieza o cambio de conector.</p></div>
+        <div class="service-card"><div class="service-card__icon">🔍</div><h4>Diagnóstico</h4><p>Diagnóstico técnico general.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap center">
+      <div class="section__head">
+        <h2>¿Tenés dudas?</h2>
+        <p>Escribinos por WhatsApp o mirá todos nuestros datos de contacto.</p>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn--primary" data-whatsapp-link href="#" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+        <a class="btn btn--ghost" href="contacto.html">Ver datos de contacto</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>© <span data-year></span> <span data-business-name>iFix Service</span>. Todos los derechos reservados.</p>
+      <p class="mt-8">No somos un proveedor de servicio autorizado por Apple. Los nombres y modelos de productos se mencionan solo a fines de identificación.</p>
+      <div class="footer__links">
+        <a href="iphone.html">iPhone</a>
+        <a href="ipad.html">iPad</a>
+        <a href="mac.html">Mac</a>
+        <a href="watch.html">Apple Watch</a>
+        <a href="contacto.html">Contacto</a>
+        <a data-instagram href="#" target="_blank" rel="noopener">Instagram</a>
+        <a data-facebook href="#" target="_blank" rel="noopener">Facebook</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/models-data.js"></script>
+  <script src="js/main.js"></script>
+  <script>initFinder();</script>
+</body>
+</html>

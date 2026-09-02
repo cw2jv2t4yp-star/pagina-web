@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reparación de iPad — iFix Service</title>
+  <meta name="description" content="Reparación de iPad por modelo: pantalla, batería, puerto de carga y más." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__brand">
+        <svg class="nav__brand-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2a1 1 0 0 1 1 1v2.07a5.5 5.5 0 0 1 4 5.3V17a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3v-6.63a5.5 5.5 0 0 1 4-5.3V3a1 1 0 0 1 1-1Zm-2 8a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-4Z"/>
+        </svg>
+        <span data-business-name>iFix Service</span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="iphone.html">iPhone</a></li>
+        <li><a class="is-active" href="ipad.html">iPad</a></li>
+        <li><a href="mac.html">Mac</a></li>
+        <li><a href="watch.html">Apple Watch</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+      </ul>
+      <a class="nav__cta" data-whatsapp-link href="#" target="_blank" rel="noopener">Pedir turno</a>
+      <button class="nav__toggle" aria-label="Abrir menú">☰</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero__eyebrow">iPad</div>
+    <h1>Reparación de iPad</h1>
+    <p>Elegí tu modelo para ver las reparaciones disponibles y el precio de cada servicio.</p>
+  </header>
+
+  <section class="section">
+    <div class="wrap">
+      <div id="model-tabs" class="model-tabs"></div>
+      <div id="model-panel" class="model-panel"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>© <span data-year></span> <span data-business-name>iFix Service</span>. Todos los derechos reservados.</p>
+      <p class="mt-8">No somos un proveedor de servicio autorizado por Apple. Los nombres y modelos de productos se mencionan solo a fines de identificación.</p>
+      <div class="footer__links">
+        <a href="iphone.html">iPhone</a>
+        <a href="ipad.html">iPad</a>
+        <a href="mac.html">Mac</a>
+        <a href="watch.html">Apple Watch</a>
+        <a href="contacto.html">Contacto</a>
+        <a data-instagram href="#" target="_blank" rel="noopener">Instagram</a>
+        <a data-facebook href="#" target="_blank" rel="noopener">Facebook</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/models-data.js"></script>
+  <script src="js/main.js"></script>
+  <script>initCategoryPage("ipad");</script>
+</body>
+</html>
