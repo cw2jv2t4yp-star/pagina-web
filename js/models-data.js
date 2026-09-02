@@ -82,7 +82,7 @@ const CATEGORY_META = {
 // pero se puede ajustar esta lista a medida que se defina el catálogo real).
 const SERVICES_BY_CATEGORY = {
   iphone: ["pantalla", "bateria", "tapa-trasera", "camara", "puerto-carga", "botones", "diagnostico"],
-  ipad: ["pantalla", "bateria", "puerto-carga", "botones", "diagnostico"],
+  ipad: ["pantalla", "bateria"],
   mac: ["pantalla", "bateria", "puerto-carga", "botones", "diagnostico"],
   watch: ["pantalla", "bateria", "botones", "diagnostico"],
 };
@@ -90,7 +90,8 @@ const SERVICES_BY_CATEGORY = {
 // Categorías sin catálogo de reparaciones definido todavía: en vez de mostrar una
 // lista de servicios, se muestra un cartel de "cotizá tu equipo" directo por
 // WhatsApp. Sacar una categoría de esta lista en cuanto se defina su catálogo.
-const SIMPLE_QUOTE_CATEGORIES = ["ipad", "mac"];
+// iPad ya salió de acá: tiene catálogo acotado a pantalla y batería (ver SERVICES_BY_CATEGORY).
+const SIMPLE_QUOTE_CATEGORIES = ["mac"];
 
 // Opciones de repuesto para iPhone, con la tecnología, pros y contras de cada una.
 // Por ahora es el único producto con este nivel de detalle: es donde más

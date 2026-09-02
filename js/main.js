@@ -669,8 +669,14 @@ function initFinder() {
   render();
 }
 
+/**
+ * Escapa texto para insertarlo tanto en contenido HTML como dentro de atributos
+ * delimitados por comillas dobles (ej. data-model="${escapeHtml(m)}"). El truco
+ * textContent→innerHTML solo no alcanza: no escapa comillas, así que un modelo
+ * con " en el nombre (ej. `iPad Pro 13" (M4)`) cortaba el atributo a la mitad.
+ */
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str;
-  return div.innerHTML;
+  return div.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }

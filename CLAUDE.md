@@ -5,8 +5,9 @@
 Sitio web para **Inkblot** (usuario: menazzi@gmail.com), un negocio de reparación de
 productos Apple. Servicios ofrecidos: reparación de **iPhone, iPad, Mac y Apple Watch**
 — pantalla, batería, vidrio trasero, cámara, puerto de carga, botones y diagnóstico
-general. El foco principal del negocio (y del catálogo de precios) es **iPhone**; iPad
-y Mac todavía no tienen catálogo definido y usan un flujo de "cotizá tu equipo" directo
+general. El foco principal del negocio (y del catálogo de precios) es **iPhone**. iPad
+tiene catálogo acotado a **pantalla y batería** (nada más, ver reglas de negocio abajo);
+Mac todavía no tiene catálogo definido y usa un flujo de "cotizá tu equipo" directo
 por WhatsApp.
 
 Este sitio es una **página paralela a la página oficial de Inkblot** (no la reemplaza).
@@ -44,6 +45,11 @@ visual, no los activos de marca.
   usuario pidió sacarla (tapa completa implicaría cambio de chasis, no se ofrece). Por
   el momento tampoco tiene precios cargados (el usuario pidió sacarlos, "por el momento
   no vamos a poner precios") — todos los modelos muestran "Consultar" para este servicio.
+- **iPad tiene catálogo, pero acotado a pantalla y batería** (`SERVICES_BY_CATEGORY.ipad`):
+  el usuario pidió agregar esas dos reparaciones nomás, con el mismo flujo que iPhone
+  (tildar el/los servicio/s y mandar la cotización por WhatsApp), en vez del cartel
+  genérico de "cotizá tu equipo". Por eso `ipad` salió de `SIMPLE_QUOTE_CATEGORIES`
+  (que ahora solo tiene `mac`). Igual que el resto, sin precios cargados todavía.
 
 ## Stack técnico
 
@@ -55,7 +61,7 @@ un hosting compartido, etc.). No hay dependencias externas.
 ```
 index.html            Home: hero, buscador guiado, categorías, servicios, contacto
 iphone.html            Página de categoría iPhone (modelos agrupados + reparaciones)
-ipad.html               Página de categoría iPad (cotización directa)
+ipad.html               Página de categoría iPad (pantalla + batería, mismo flujo que iPhone)
 mac.html                Página de categoría Mac (cotización directa)
 watch.html              Página de categoría Apple Watch
 contacto.html           Página de contacto (WhatsApp, teléfono, email, horarios, redes)
@@ -83,8 +89,9 @@ Cada página de categoría tiene los mismos dos contenedores vacíos:
 ```
 
 y al final llama a `initCategoryPage("iphone")` (o la categoría que corresponda), en
-`js/main.js`. Para iPad/Mac (`SIMPLE_QUOTE_CATEGORIES`) el panel muestra un cartel de
-cotización directa en vez del listado de servicios.
+`js/main.js`. Para Mac (`SIMPLE_QUOTE_CATEGORIES`) el panel muestra un cartel de
+cotización directa en vez del listado de servicios; iPad ya no está en esa lista —
+usa el listado normal, acotado a pantalla y batería.
 
 ### Precios (`PRICES` en `js/models-data.js`)
 
@@ -127,9 +134,10 @@ el mismo patrón que antes: `PRICES["iphone"]["<modelo>"]["<servicio>"] = númer
 2. **Tiempos de espera**: no hay ningún dato cargado todavía (el usuario dijo que lo
    iba a pasar más adelante). Por ahora todas las opciones de repuesto muestran
    "Tiempo: A confirmar" fijo en `renderOptionCard()`.
-3. **Precios de iPad, Mac y Apple Watch**: sin catálogo. iPad y Mac muestran cotización
-   directa (`SIMPLE_QUOTE_CATEGORIES`); Apple Watch ya tiene el listado de servicios
-   pero sin ningún precio cargado (todo "Consultar").
+3. **Precios de iPad, Mac y Apple Watch**: sin catálogo de precios. Mac muestra
+   cotización directa (`SIMPLE_QUOTE_CATEGORIES`); iPad (pantalla + batería) y Apple
+   Watch ya tienen el listado de servicios pero sin ningún precio cargado (todo
+   "Consultar").
 4. **Precios de iPhone, todos los servicios y modelos**: se habían cargado (con precios
    reales que había dado el usuario) y después se sacaron por completo a pedido
    explícito del usuario ("te repito, sacar los precios" → confirmó que era para
