@@ -130,6 +130,7 @@ function renderOptionCard(opt, priceAmount, checkbox) {
         <span>Precio: ${price ? price : "Consultar"}</span>
         <span>Tiempo: A confirmar</span>
       </div>
+      ${opt.note ? `<p class="option-card__note">${escapeHtml(opt.note)}</p>` : ""}
     </div>`;
 }
 

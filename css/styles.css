@@ -729,6 +729,12 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   margin-top: 4px;
 }
 
+.option-card__note {
+  font-size: 11px;
+  color: var(--gray);
+  margin-top: 6px;
+}
+
 /* Buscador: paso de "elegí el tipo" (tarjetas de opción clickeables) */
 .finder__options-list {
   display: grid;

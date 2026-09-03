@@ -121,6 +121,7 @@ const IPHONE_REPAIR_OPTIONS = {
       tech: "Repuesto original de Apple (Service Pack): la misma pantalla con la que sale el equipo de fábrica.",
       pros: ["Calidad idéntica a la de fábrica", "Sin avisos ni límites de funciones (brillo automático, True Tone, etc.)"],
       cons: ["La opción más cara", "No está disponible para todos los modelos"],
+      note: "Sujeto a disponibilidad de stock.",
     },
   ],
 };
