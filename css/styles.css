@@ -665,7 +665,6 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .repair-card .repair-item {
   border-radius: 0;
 }
-.repair-card .repair-item.is-checked { box-shadow: none; }
 
 .repair-item__toggle-arrow {
   flex-shrink: 0;

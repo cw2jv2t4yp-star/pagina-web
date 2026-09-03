@@ -115,16 +115,16 @@ function findGroupIndex(category, model) {
  *   un pedido con varias reparaciones a la vez). { serviceId, checked }.
  */
 function renderOptionCard(opt, priceAmount, checkbox) {
-  const pros = opt.pros.map((p) => `<li>${escapeHtml(p)}</li>`).join("");
+  const pros = (opt.pros || []).map((p) => `<li>${escapeHtml(p)}</li>`).join("");
   const price = formatPrice(priceAmount);
   const checkHtml = checkbox
-    ? `<button class="option-card__check${checkbox.checked ? " is-checked" : ""}" data-select-service="${checkbox.serviceId}" data-select-option="${opt.id}" aria-pressed="${checkbox.checked}" aria-label="Incluir ${escapeHtml(opt.name)} en el pedido"></button>`
+    ? `<button class="option-card__check${checkbox.checked ? " is-checked" : ""}" data-select-service="${checkbox.serviceId}" data-select-option="${escapeHtml(opt.id)}" aria-pressed="${checkbox.checked}" aria-label="Incluir ${escapeHtml(opt.name)} en el pedido"></button>`
     : "";
   return `
     <div class="option-card${checkbox ? " option-card--selectable" : ""}">
       ${checkHtml}
       <h5>${escapeHtml(opt.name)}</h5>
-      <p class="option-card__tech">${escapeHtml(opt.tech)}</p>
+      ${opt.tech ? `<p class="option-card__tech">${escapeHtml(opt.tech)}</p>` : ""}
       ${pros ? `<ul class="option-card__list">${pros}</ul>` : ""}
       <div class="option-card__meta">
         <span>Precio: ${price ? price : "Consultar"}</span>
@@ -166,7 +166,7 @@ function initCategoryPage(categoryKey) {
   let activeModel = groups[0].models[0];
   let openGroupIndex = 0;
   let selected = []; // reparaciones tildadas para pedir juntas: { serviceId, optionId | null }
-  const openOptionServices = new Set(); // qué acordeones de opciones (pantalla, tapa trasera) están abiertos
+  const openOptionServices = new Set(); // qué acordeones de opciones (pantalla, vidrio trasero) están abiertos
 
   function isSelected(serviceId, optionId) {
     return selected.some((x) => x.serviceId === serviceId && x.optionId === optionId);
@@ -214,12 +214,16 @@ function initCategoryPage(categoryKey) {
       const services = SERVICES.filter((s) => serviceIds.includes(s.id));
       const items = services
         .map((s) => {
-          const hasOptions = categoryKey === "iphone" && IPHONE_REPAIR_OPTIONS[s.id];
+          const isColorService = categoryKey === "iphone" && s.id === "tapa-trasera" && getBackGlassColors(activeModel).length > 0;
+          const hasOptions = (categoryKey === "iphone" && IPHONE_REPAIR_OPTIONS[s.id]) || isColorService;
           if (hasOptions) {
-            const options = getAvailableOptions(categoryKey, activeModel, s.id);
+            const options = isColorService
+              ? getBackGlassColors(activeModel).map((c) => ({ id: c, name: c }))
+              : getAvailableOptions(categoryKey, activeModel, s.id);
+            const flatPrice = isColorService ? getPrice(categoryKey, activeModel, s.id) : null;
             const cards = options
               .map((o) =>
-                renderOptionCard(o, getOptionPrice(categoryKey, activeModel, s.id, o.id), {
+                renderOptionCard(o, isColorService ? flatPrice : getOptionPrice(categoryKey, activeModel, s.id, o.id), {
                   serviceId: s.id,
                   checked: isSelected(s.id, o.id),
                 })
@@ -261,11 +265,18 @@ function initCategoryPage(categoryKey) {
       if (hasSelection) {
         const lines = selected.map((sel, i) => {
           const service = SERVICES.find((x) => x.id === sel.serviceId);
-          const option = sel.optionId ? (IPHONE_REPAIR_OPTIONS[sel.serviceId] || []).find((o) => o.id === sel.optionId) : null;
-          const label = option ? option.name : service.label;
-          const priceAmount = option
-            ? getOptionPrice(categoryKey, activeModel, sel.serviceId, sel.optionId)
-            : getPrice(categoryKey, activeModel, sel.serviceId);
+          let label, priceAmount;
+          if (sel.serviceId === "tapa-trasera" && sel.optionId) {
+            // el optionId de vidrio trasero es directamente el color elegido
+            label = `${service.label} (${sel.optionId})`;
+            priceAmount = getPrice(categoryKey, activeModel, sel.serviceId);
+          } else {
+            const option = sel.optionId ? (IPHONE_REPAIR_OPTIONS[sel.serviceId] || []).find((o) => o.id === sel.optionId) : null;
+            label = option ? option.name : service.label;
+            priceAmount = option
+              ? getOptionPrice(categoryKey, activeModel, sel.serviceId, sel.optionId)
+              : getPrice(categoryKey, activeModel, sel.serviceId);
+          }
           return { n: i + 1, label, priceAmount };
         });
         ctaLabel = `Consultar ${selected.length} ${selected.length > 1 ? "reparaciones" : "reparación"} por WhatsApp`;
@@ -337,9 +348,27 @@ function initFinder() {
     openGroupIndex: 0,
   };
 
+  /** true si el servicio activo es "vidrio trasero" en iPhone: sus "opciones" son colores, no tecnologías. */
+  function isColorService(category, serviceId) {
+    return category === "iphone" && serviceId === "tapa-trasera";
+  }
+
+  /** Opciones a mostrar en el paso "option": colores (vidrio trasero) o tecnologías de repuesto (pantalla). */
+  function getStepOptions(category, model, serviceId) {
+    if (isColorService(category, serviceId)) {
+      return getBackGlassColors(model).map((c) => ({ id: c, name: c }));
+    }
+    return getAvailableOptions(category, model, serviceId);
+  }
+
   /** Info para mostrar una reparación ya agregada al carrito (ícono, nombre, precio). */
   function repairLineInfo(repair) {
     const service = SERVICES.find((s) => s.id === repair.serviceId);
+    if (isColorService(state.category, repair.serviceId) && repair.optionId) {
+      const label = `${service.label} (${repair.optionId})`;
+      const priceAmount = getPrice(state.category, state.model, repair.serviceId);
+      return { icon: service.icon, label, priceAmount };
+    }
     const option = repair.optionId ? (IPHONE_REPAIR_OPTIONS[repair.serviceId] || []).find((o) => o.id === repair.optionId) : null;
     const label = option ? option.name : service.label;
     const priceAmount = option
@@ -354,7 +383,7 @@ function initFinder() {
     const steps = ["category", "model"];
     if (!state.category || SIMPLE_QUOTE_CATEGORIES.includes(state.category)) return steps;
     steps.push("service");
-    if (state.category === "iphone" && state.serviceId && IPHONE_REPAIR_OPTIONS[state.serviceId]) {
+    if (state.serviceId && getStepOptions(state.category, state.model, state.serviceId).length > 0) {
       steps.push("option");
     }
     steps.push("symptom");
@@ -518,17 +547,20 @@ function initFinder() {
 
     if (state.step === "option") {
       const service = SERVICES.find((s) => s.id === state.serviceId);
-      const options = getAvailableOptions(state.category, state.model, state.serviceId);
+      const isColor = isColorService(state.category, state.serviceId);
+      const options = getStepOptions(state.category, state.model, state.serviceId);
+      const titleText = isColor ? "¿De qué color es tu iPhone?" : `¿Qué tipo de ${service.label.toLowerCase()} querés?`;
+      const subtitleText = isColor ? "Así sabemos qué vidrio trasero pedir." : "Estas son las opciones disponibles, con lo bueno y lo malo de cada una.";
       bodyEl.innerHTML = `
         ${backButton()}
-        <h3 class="finder__title">¿Qué tipo de ${service.label.toLowerCase()} querés?</h3>
-        <p class="finder__subtitle">Estas son las opciones disponibles, con lo bueno y lo malo de cada una.</p>
+        <h3 class="finder__title">${titleText}</h3>
+        <p class="finder__subtitle">${subtitleText}</p>
         <div class="finder__options-list">
           ${options
             .map(
               (opt) => `
-              <button class="finder__option-card" data-option="${opt.id}">
-                ${renderOptionCard(opt, getOptionPrice(state.category, state.model, state.serviceId, opt.id))}
+              <button class="finder__option-card" data-option="${escapeHtml(opt.id)}">
+                ${renderOptionCard(opt, isColor ? getPrice(state.category, state.model, state.serviceId) : getOptionPrice(state.category, state.model, state.serviceId, opt.id))}
                 <span class="finder__option-card-cta">Elegir esta opción</span>
               </button>`
             )

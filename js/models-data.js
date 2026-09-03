@@ -183,6 +183,54 @@ const MODEL_HELP = {
   watch: "En el reloj: Ajustes > General > Información. O desde el iPhone: abrí la app \"Watch\" > General > Información.",
 };
 
+// Colores oficiales de tapa/vidrio trasero por modelo de iPhone (los mismos nombres
+// que usa Apple para cada generación). Se usa para que el cliente indique de qué
+// color es su equipo al pedir el cambio de vidrio trasero — no cambia el precio,
+// es solo para que el taller sepa qué repuesto pedir. Modelos no listados acá
+// (iPad, Mac, Watch) no muestran selector de color.
+const IPHONE_BACK_GLASS_COLORS = {
+  "iPhone 11": ["Blanco", "Negro", "(PRODUCT)RED", "Amarillo", "Verde", "Púrpura"],
+  "iPhone 11 Pro": ["Verde noche", "Gris espacial", "Plata", "Oro"],
+  "iPhone 11 Pro Max": ["Verde noche", "Gris espacial", "Plata", "Oro"],
+
+  "iPhone 12 mini": ["Negro", "Blanco", "(PRODUCT)RED", "Verde", "Azul", "Púrpura"],
+  "iPhone 12": ["Negro", "Blanco", "(PRODUCT)RED", "Verde", "Azul", "Púrpura"],
+  "iPhone 12 Pro": ["Grafito", "Plata", "Oro", "Azul pacífico"],
+  "iPhone 12 Pro Max": ["Grafito", "Plata", "Oro", "Azul pacífico"],
+
+  "iPhone 13 mini": ["Medianoche", "Luz estelar", "Azul", "Rosa", "Verde", "(PRODUCT)RED"],
+  "iPhone 13": ["Medianoche", "Luz estelar", "Azul", "Rosa", "Verde", "(PRODUCT)RED"],
+  "iPhone 13 Pro": ["Grafito", "Oro", "Plata", "Azul sierra", "Verde alpino"],
+  "iPhone 13 Pro Max": ["Grafito", "Oro", "Plata", "Azul sierra", "Verde alpino"],
+
+  "iPhone SE (2ª gen., 2020)": ["Negro", "Blanco", "(PRODUCT)RED"],
+  "iPhone SE (3ª gen., 2022)": ["Medianoche", "Luz estelar", "(PRODUCT)RED"],
+
+  "iPhone 14": ["Medianoche", "Luz estelar", "(PRODUCT)RED", "Azul", "Púrpura", "Amarillo"],
+  "iPhone 14 Plus": ["Medianoche", "Luz estelar", "(PRODUCT)RED", "Azul", "Púrpura", "Amarillo"],
+  "iPhone 14 Pro": ["Negro espacial", "Plata", "Oro", "Púrpura oscuro"],
+  "iPhone 14 Pro Max": ["Negro espacial", "Plata", "Oro", "Púrpura oscuro"],
+
+  "iPhone 15": ["Negro", "Azul", "Verde", "Amarillo", "Rosa"],
+  "iPhone 15 Plus": ["Negro", "Azul", "Verde", "Amarillo", "Rosa"],
+  "iPhone 15 Pro": ["Titanio negro", "Titanio blanco", "Titanio azul", "Titanio natural"],
+  "iPhone 15 Pro Max": ["Titanio negro", "Titanio blanco", "Titanio azul", "Titanio natural"],
+
+  "iPhone 16": ["Negro", "Blanco", "Rosa", "Verde azulado", "Azul ultramar"],
+  "iPhone 16 Plus": ["Negro", "Blanco", "Rosa", "Verde azulado", "Azul ultramar"],
+  "iPhone 16 Pro": ["Titanio negro", "Titanio blanco", "Titanio natural", "Titanio desierto"],
+  "iPhone 16 Pro Max": ["Titanio negro", "Titanio blanco", "Titanio natural", "Titanio desierto"],
+  "iPhone 16e": ["Negro", "Blanco"],
+
+  "iPhone 17 Pro": ["Naranja cósmico", "Azul profundo", "Plata"],
+  "iPhone 17 Pro Max": ["Naranja cósmico", "Azul profundo", "Plata"],
+};
+
+/** Colores de tapa trasera disponibles para un modelo, o [] si no aplica (no es iPhone, o modelo sin datos). */
+function getBackGlassColors(model) {
+  return IPHONE_BACK_GLASS_COLORS[model] || [];
+}
+
 // Precios en dólares (USD). Todos los montos son números; el formateo
 // ("US$ 50") se hace al mostrarlos, no acá.
 //

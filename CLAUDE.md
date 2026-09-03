@@ -42,11 +42,16 @@ visual, no los activos de marca.
 - Batería es un ítem simple (un solo precio por modelo), **no** tiene variantes tipo
   "estándar / alta capacidad" — eso se había armado como ejemplo antes de tener datos
   reales y se sacó al cargar la lista de precios real.
-- Solo pantalla de iPhone tiene variantes de repuesto (ver más abajo). Vidrio trasero es
-  un ítem simple, sin "solo vidrio" vs. "tapa completa" — se probó esa distinción y el
-  usuario pidió sacarla (tapa completa implicaría cambio de chasis, no se ofrece). Por
-  el momento tampoco tiene precios cargados (el usuario pidió sacarlos, "por el momento
-  no vamos a poner precios") — todos los modelos muestran "Consultar" para este servicio.
+- Vidrio trasero de iPhone no tiene "solo vidrio" vs. "tapa completa" — se probó esa
+  distinción y el usuario pidió sacarla (tapa completa implicaría cambio de chasis, no
+  se ofrece). Por el momento tampoco tiene precios cargados (el usuario pidió sacarlos,
+  "por el momento no vamos a poner precios") — todos los modelos muestran "Consultar"
+  para este servicio.
+- **Vidrio trasero sí tiene selector de color** (a pedido del usuario, para que el
+  cliente indique de entrada de qué color es su equipo): se despliega igual que
+  Pantalla, con una tarjeta por color oficial de Apple para ese modelo puntual (ver
+  `IPHONE_BACK_GLASS_COLORS` más abajo). El color no cambia el precio — es la misma
+  reparación, solo para que el taller sepa qué repuesto pedir.
 - **iPad tiene catálogo, pero acotado a pantalla y batería** (`SERVICES_BY_CATEGORY.ipad`):
   el usuario pidió agregar esas dos reparaciones nomás, con el mismo flujo que iPhone
   (tildar el/los servicio/s y mandar la cotización por WhatsApp), en vez del cartel
@@ -101,11 +106,13 @@ usa el listado normal, acotado a pantalla y batería.
 Todo en dólares, como números (el formateo "US$ 50" se hace al mostrar, con
 `formatPrice()`). Dos formas según el servicio:
 
-- **Servicios simples** (batería, vidrio trasero, cámara, puerto de carga, botones,
-  diagnóstico): `PRICES["iphone"]["iPhone 13"]["bateria"] = 69`
-- **Servicios con opciones de repuesto** (por ahora, solo pantalla en iPhone — ver
-  `IPHONE_REPAIR_OPTIONS`): el valor es un objeto por opción:
-  `PRICES["iphone"]["iPhone 13"]["pantalla"] = { oled: 144 }`
+- **Servicios simples** (batería, cámara, puerto de carga, botones, diagnóstico):
+  `PRICES["iphone"]["iPhone 13"]["bateria"] = 69`
+- **Servicios con acordeón de opciones** (pantalla y vidrio trasero, solo en iPhone —
+  ver `IPHONE_REPAIR_OPTIONS` e `IPHONE_BACK_GLASS_COLORS`): el valor en `PRICES` sigue
+  siendo un objeto por opción, pero **solo para pantalla** el precio varía por opción
+  (`{ oled: 144 }`); para vidrio trasero el precio es el mismo sin importar el color
+  elegido, así que se guarda como número simple: `PRICES["iphone"]["iPhone 13"]["tapa-trasera"] = 60`.
 
 Para pantalla, las opciones posibles son `oled`, `incell` (LCD) y `original` (repuesto
 Apple). **No todos los modelos tienen las tres**: la página solo muestra las opciones
@@ -114,9 +121,14 @@ que tienen precio cargado para ese modelo puntual (ej. iPhone 11 base solo tiene
 precio cargado para ese servicio, se muestran todas las opciones con "Consultar" para
 no dejar la sección vacía (ver `getAvailableOptions()` en `main.js`).
 
-"Vidrio trasero" (`tapa-trasera`) es un servicio simple, sin variantes de repuesto —
-mismo patrón que batería. No se ofrece cambio de tapa completa (a diferencia del
-vidrio, implicaría cambio de chasis; el usuario pidió explícitamente no ofrecerlo).
+**Vidrio trasero (`tapa-trasera`) se despliega igual que pantalla, pero por color**: no
+se ofrece "solo vidrio" vs. "tapa completa" (implicaría cambio de chasis, el usuario
+pidió explícitamente no ofrecerlo) — la variante es el color del equipo. Los colores
+salen de `IPHONE_BACK_GLASS_COLORS[modelo]` (los nombres oficiales que usa Apple para
+esa generación, ver `js/models-data.js`), no de `IPHONE_REPAIR_OPTIONS`, y el precio
+que se muestra es el mismo para todos los colores de un modelo (`getPrice()`, no
+`getOptionPrice()` — ver `isColorService()` en `main.js`, tanto en `initCategoryPage`
+como en el buscador guiado).
 
 **Por ahora `PRICES.iphone` está vacío (`{}`)**: el usuario pidió sacar todos los
 precios del sitio ("te repito, sacar los precios" → confirmó que era para todos, no
