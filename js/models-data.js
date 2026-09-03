@@ -240,7 +240,7 @@ const COLOR_SWATCHES = {
   "(PRODUCT)RED": "#B0212F",
   "Amarillo": "#F3E2A9",
   "Verde": "#A9C6A0",
-  "Púrpura": "#D6CADD",
+  "Púrpura": "#9B7FC7",
   "Verde noche": "#4E5851",
   "Gris espacial": "#55534E",
   "Plata": "#E3E4E6",

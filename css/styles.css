@@ -709,8 +709,8 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .color-swatch {
   flex-shrink: 0;
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
   border-radius: 50%;
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
