@@ -219,7 +219,7 @@ function initCategoryPage(categoryKey) {
         <p class="model-panel__subtitle">Todavía estamos sumando el detalle de reparaciones para ${meta.label}. Contanos qué le pasa a tu equipo y te cotizamos a la brevedad.</p>
         <div class="model-panel__cta">
           <a class="btn btn--primary" href="${whatsappLink(
-            `Hola! Tengo un/a ${activeModel} y quiero cotizar una reparación.`
+            `Hola! Tengo un/a ${formatDeviceLabel(categoryKey, activeModel)} y quiero cotizar una reparación.`
           )}" target="_blank" rel="noopener">Cotizar por WhatsApp</a>
         </div>`;
     } else {
@@ -285,9 +285,10 @@ function initCategoryPage(categoryKey) {
         })
         .join("");
 
+      const deviceLabel = formatDeviceLabel(categoryKey, activeModel);
       const hasSelection = selected.length > 0;
       let ctaLabel = "Solicitar cotización por WhatsApp";
-      let message = `Hola! Quiero consultar por una reparación para ${activeModel}.`;
+      let message = `Hola! Quiero consultar por una reparación para ${deviceLabel}.`;
       let totalHtml = "";
 
       if (hasSelection) {
@@ -308,7 +309,7 @@ function initCategoryPage(categoryKey) {
           return { n: i + 1, label, priceAmount };
         });
         ctaLabel = `Consultar ${selected.length} ${selected.length > 1 ? "reparaciones" : "reparación"} por WhatsApp`;
-        message = `Hola! Tengo un/a ${activeModel} y quiero cotizar estas reparaciones:\n${lines
+        message = `Hola! Tengo un/a ${deviceLabel} y quiero cotizar estas reparaciones:\n${lines
           .map((l) => `${l.n}) ${l.label}`)
           .join("\n")}\n¿Me pasás precio${lines.length > 1 ? "s" : ""} y tiempo de espera?`;
         const allPriced = lines.every((l) => l.priceAmount != null);
