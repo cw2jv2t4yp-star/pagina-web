@@ -373,6 +373,7 @@ function initFinder() {
     if (isColorService(category, serviceId)) {
       return getBackGlassColors(model).map((c) => ({ id: c, name: c }));
     }
+    if (category !== "iphone") return []; // las opciones de repuesto de pantalla (OLED/Incell/Original) son solo de iPhone
     return getAvailableOptions(category, model, serviceId);
   }
 
