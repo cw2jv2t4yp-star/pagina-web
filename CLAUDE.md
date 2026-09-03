@@ -73,6 +73,8 @@ mac.html                Página de categoría Mac (cotización directa)
 watch.html              Página de categoría Apple Watch
 contacto.html           Página de contacto (WhatsApp, teléfono, email, dirección con
                         link "Cómo llegar" y mapa embebido, horarios, redes)
+blog.html               Sección de blog/novedades — existe como cartel "próximamente",
+                        sin artículos reales todavía (a pedido del usuario)
 css/styles.css          Estilos (glass/"Cristal": blur, translucidez, paleta, componentes)
 js/config.js            Datos generales del negocio (nombre, WhatsApp, teléfono, email, etc.)
 js/models-data.js       Modelos, grupos de modelos, servicios, opciones de repuesto y PRICES
@@ -167,6 +169,10 @@ el mismo patrón que antes: `PRICES["iphone"]["<modelo>"]["<servicio>"] = númer
 7. Imágenes reales del local/trabajos (hoy no hay fotos, todo es ícono/emoji para
    evitar usar imágenes con derechos de Apple).
 8. Definir dominio propio y dónde hostear (GitHub Pages, Netlify, hosting compartido, etc.).
+9. **Artículos del blog** (`blog.html`): el usuario pidió crear la sección ("blog o
+   newsletter" con novedades de Apple y equipos nuevos) pero explícitamente todavía no
+   quiere cargar contenido real — por ahora es solo un cartel de "próximamente". No
+   escribir posts de ejemplo/inventados sin que el usuario lo pida.
 
 ## Convenciones
 

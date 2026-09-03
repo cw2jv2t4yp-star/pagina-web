@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reparación de iPhone — Inkblot</title>
-  <meta name="description" content="Reparación de iPhone por modelo: pantalla, batería, tapa trasera, cámara y más." />
+  <title>Blog — Inkblot</title>
+  <meta name="description" content="Novedades sobre productos Apple y consejos de reparación." />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon-512.png" />
   <link rel="stylesheet" href="css/styles.css" />
@@ -18,11 +18,11 @@
         <span data-business-name>Inkblot</span>
       </a>
       <ul class="nav__links">
-        <li><a class="is-active" href="iphone.html">iPhone</a></li>
+        <li><a href="iphone.html">iPhone</a></li>
         <li><a href="ipad.html">iPad</a></li>
         <li><a href="mac.html">Mac</a></li>
         <li><a href="watch.html">Apple Watch</a></li>
-        <li><a href="blog.html">Blog</a></li>
+        <li><a class="is-active" href="blog.html">Blog</a></li>
         <li><a href="contacto.html">Contacto</a></li>
       </ul>
       <a class="nav__cta" data-whatsapp-link href="#" target="_blank" rel="noopener">Pedir turno</a>
@@ -31,15 +31,20 @@
   </nav>
 
   <header class="hero">
-    <div class="hero__eyebrow">iPhone</div>
-    <h1>Reparación de iPhone</h1>
-    <p>Elegí tu modelo para ver las reparaciones disponibles y el precio de cada servicio.</p>
+    <div class="hero__eyebrow">Blog</div>
+    <h1>Novedades Apple</h1>
+    <p>Equipos nuevos, noticias y consejos de reparación. Muy pronto vamos a empezar a publicar acá.</p>
   </header>
 
   <section class="section">
-    <div class="wrap">
-      <div id="model-tabs" class="model-tabs"></div>
-      <div id="model-panel" class="model-panel"></div>
+    <div class="wrap center">
+      <div class="section__head">
+        <h2>Todavía no hay artículos publicados</h2>
+        <p>Estamos preparando el contenido. Mientras tanto, escribinos por WhatsApp si tenés alguna consulta.</p>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn--primary" data-whatsapp-link href="#" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+      </div>
     </div>
   </section>
 
@@ -64,6 +69,5 @@
   <script src="js/config.js"></script>
   <script src="js/models-data.js"></script>
   <script src="js/main.js"></script>
-  <script>initCategoryPage("iphone");</script>
 </body>
 </html>
