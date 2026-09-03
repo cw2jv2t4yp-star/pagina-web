@@ -57,6 +57,15 @@ visual, no los activos de marca.
   (tildar el/los servicio/s y mandar la cotización por WhatsApp), en vez del cartel
   genérico de "cotizá tu equipo". Por eso `ipad` salió de `SIMPLE_QUOTE_CATEGORIES`
   (que ahora solo tiene `mac`). Igual que el resto, sin precios cargados todavía.
+- **Pantalla de iPad: sin OLED/Incell/Original** (eso es propio de iPhone). El usuario
+  pidió simplemente "Cambio de pantalla" — pero aclaró un dato técnico real: en el iPad
+  "base" (no Pro/Air/mini) el vidrio táctil NO viene pegado al LCD de fábrica, así que
+  se puede cambiar el vidrio solo; en iPad Pro, Air y mini el vidrio y el LCD vienen
+  laminados/pegados de fábrica y no se pueden separar sin equipo especializado. Por eso
+  **solo** el iPad base (`IPAD_SEPARATE_GLASS_MODELS` = 7ª/8ª, 9ª y 10ª gen.) despliega
+  un acordeón con dos opciones ("Vidrio (solo táctil)" / "Pantalla completa (LCD +
+  vidrio)", ver `IPAD_SCREEN_OPTIONS`); en el resto de los iPad, "Pantalla" sigue siendo
+  un ítem simple, sin acordeón.
 
 ## Stack técnico
 
@@ -110,18 +119,25 @@ Todo en dólares, como números (el formateo "US$ 50" se hace al mostrar, con
 
 - **Servicios simples** (batería, cámara, puerto de carga, botones, diagnóstico):
   `PRICES["iphone"]["iPhone 13"]["bateria"] = 69`
-- **Servicios con acordeón de opciones** (pantalla y vidrio trasero, solo en iPhone —
-  ver `IPHONE_REPAIR_OPTIONS` e `IPHONE_BACK_GLASS_COLORS`): el valor en `PRICES` sigue
-  siendo un objeto por opción, pero **solo para pantalla** el precio varía por opción
-  (`{ oled: 144 }`); para vidrio trasero el precio es el mismo sin importar el color
-  elegido, así que se guarda como número simple: `PRICES["iphone"]["iPhone 13"]["tapa-trasera"] = 60`.
+- **Servicios con acordeón de opciones** (pantalla de iPhone, vidrio trasero de iPhone,
+  y pantalla del iPad "base" — ver `IPHONE_REPAIR_OPTIONS`, `IPHONE_BACK_GLASS_COLORS` e
+  `IPAD_SCREEN_OPTIONS`): el valor en `PRICES` sigue siendo un objeto por opción, pero
+  **solo para pantalla de iPhone** el precio varía por opción (`{ oled: 144 }`); para
+  vidrio trasero y para pantalla de iPad el precio es el mismo sin importar la opción
+  elegida, así que se guarda como número simple: `PRICES["iphone"]["iPhone 13"]["tapa-trasera"] = 60`.
 
-Para pantalla, las opciones posibles son `oled`, `incell` (LCD) y `original` (repuesto
-Apple). **No todos los modelos tienen las tres**: la página solo muestra las opciones
-que tienen precio cargado para ese modelo puntual (ej. iPhone 11 base solo tiene
-`incell`, nunca tuvo pantalla OLED de fábrica). Si un modelo todavía no tiene ningún
-precio cargado para ese servicio, se muestran todas las opciones con "Consultar" para
-no dejar la sección vacía (ver `getAvailableOptions()` en `main.js`).
+Para pantalla de iPhone, las opciones posibles son `oled`, `incell` (LCD) y `original`
+(repuesto Apple). **No todos los modelos tienen las tres**: la página solo muestra las
+opciones que tienen precio cargado para ese modelo puntual (ej. iPhone 11 base solo
+tiene `incell`, nunca tuvo pantalla OLED de fábrica). Si un modelo todavía no tiene
+ningún precio cargado para ese servicio, se muestran todas las opciones con "Consultar"
+para no dejar la sección vacía (ver `getAvailableOptions()` en `main.js`).
+
+Para pantalla de iPad, las opciones son `vidrio` y `completa`, pero **no dependen del
+precio cargado como en pantalla de iPhone**: dependen del modelo (`isIpadSeparateGlassModel()`
+en `main.js`/`models-data.js`) — el iPad base (7ª/8ª, 9ª, 10ª gen.) las muestra siempre;
+el resto de los iPad ni siquiera entra al branch de opciones, "Pantalla" queda como
+ítem simple.
 
 **Vidrio trasero (`tapa-trasera`) se despliega igual que pantalla, pero por color**: no
 se ofrece "solo vidrio" vs. "tapa completa" (implicaría cambio de chasis, el usuario

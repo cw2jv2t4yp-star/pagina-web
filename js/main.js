@@ -147,6 +147,18 @@ function getAvailableOptions(category, model, serviceId) {
   return options.filter((o) => pricedIds.includes(o.id));
 }
 
+/**
+ * Busca los datos { id, name, tech } de una opción de repuesto puntual, sea cual sea
+ * la tabla de origen (pantalla de iPhone en IPHONE_REPAIR_OPTIONS, o vidrio/pantalla
+ * completa de iPad en IPAD_SCREEN_OPTIONS). Devuelve null si no se encuentra.
+ */
+function findOptionDetails(category, serviceId, optionId) {
+  if (category === "ipad" && serviceId === "pantalla") {
+    return IPAD_SCREEN_OPTIONS.find((o) => o.id === optionId) || null;
+  }
+  return (IPHONE_REPAIR_OPTIONS[serviceId] || []).find((o) => o.id === optionId) || null;
+}
+
 /* -------------------- Páginas de categoría -------------------- */
 
 /**
@@ -215,7 +227,8 @@ function initCategoryPage(categoryKey) {
       const items = services
         .map((s) => {
           const isColorService = categoryKey === "iphone" && s.id === "tapa-trasera" && getBackGlassColors(activeModel).length > 0;
-          const hasOptions = (categoryKey === "iphone" && IPHONE_REPAIR_OPTIONS[s.id]) || isColorService;
+          const isIpadGlassOption = categoryKey === "ipad" && s.id === "pantalla" && isIpadSeparateGlassModel(activeModel);
+          const hasOptions = (categoryKey === "iphone" && IPHONE_REPAIR_OPTIONS[s.id]) || isColorService || isIpadGlassOption;
           if (hasOptions) {
             let cards;
             if (isColorService) {
@@ -234,7 +247,7 @@ function initCategoryPage(categoryKey) {
                   <span>Tiempo: A confirmar</span>
                 </div>`;
             } else {
-              const options = getAvailableOptions(categoryKey, activeModel, s.id);
+              const options = isIpadGlassOption ? IPAD_SCREEN_OPTIONS : getAvailableOptions(categoryKey, activeModel, s.id);
               cards = options
                 .map((o) =>
                   renderOptionCard(o, getOptionPrice(categoryKey, activeModel, s.id, o.id), {
@@ -286,7 +299,7 @@ function initCategoryPage(categoryKey) {
             label = `${service.label} (${sel.optionId})`;
             priceAmount = getPrice(categoryKey, activeModel, sel.serviceId);
           } else {
-            const option = sel.optionId ? (IPHONE_REPAIR_OPTIONS[sel.serviceId] || []).find((o) => o.id === sel.optionId) : null;
+            const option = sel.optionId ? findOptionDetails(categoryKey, sel.serviceId, sel.optionId) : null;
             label = option ? option.name : service.label;
             priceAmount = option
               ? getOptionPrice(categoryKey, activeModel, sel.serviceId, sel.optionId)
@@ -368,10 +381,13 @@ function initFinder() {
     return category === "iphone" && serviceId === "tapa-trasera";
   }
 
-  /** Opciones a mostrar en el paso "option": colores (vidrio trasero) o tecnologías de repuesto (pantalla). */
+  /** Opciones a mostrar en el paso "option": colores (vidrio trasero), vidrio/pantalla completa (iPad base) o tecnologías de repuesto (pantalla iPhone). */
   function getStepOptions(category, model, serviceId) {
     if (isColorService(category, serviceId)) {
       return getBackGlassColors(model).map((c) => ({ id: c, name: c }));
+    }
+    if (category === "ipad" && serviceId === "pantalla" && isIpadSeparateGlassModel(model)) {
+      return IPAD_SCREEN_OPTIONS;
     }
     if (category !== "iphone") return []; // las opciones de repuesto de pantalla (OLED/Incell/Original) son solo de iPhone
     return getAvailableOptions(category, model, serviceId);
@@ -385,7 +401,7 @@ function initFinder() {
       const priceAmount = getPrice(state.category, state.model, repair.serviceId);
       return { icon: service.icon, label, priceAmount };
     }
-    const option = repair.optionId ? (IPHONE_REPAIR_OPTIONS[repair.serviceId] || []).find((o) => o.id === repair.optionId) : null;
+    const option = repair.optionId ? findOptionDetails(state.category, repair.serviceId, repair.optionId) : null;
     const label = option ? option.name : service.label;
     const priceAmount = option
       ? getOptionPrice(state.category, state.model, repair.serviceId, option.id)

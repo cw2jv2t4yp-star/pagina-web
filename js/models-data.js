@@ -124,6 +124,31 @@ const IPHONE_REPAIR_OPTIONS = {
   ],
 };
 
+// En el iPad "base" (no Pro/Air/mini) el vidrio táctil NO viene pegado al LCD de
+// fábrica, así que se puede cambiar el vidrio solo sin tocar el LCD. En iPad Pro,
+// Air y mini el vidrio y el LCD vienen laminados/pegados de fábrica: separarlos
+// sin dañar el LCD requiere equipo especializado, así que ahí no se ofrece esa
+// opción y "Pantalla" queda como ítem simple (ver SERVICES_BY_CATEGORY / main.js).
+const IPAD_SEPARATE_GLASS_MODELS = ["iPad (10ª gen.)", "iPad (9ª gen.)", "iPad (8ª/7ª gen.)"];
+
+const IPAD_SCREEN_OPTIONS = [
+  {
+    id: "vidrio",
+    name: "Vidrio (solo táctil)",
+    tech: "Se cambia solo el vidrio táctil externo, sin tocar el LCD. Sirve cuando la imagen se ve bien y lo único roto es el vidrio.",
+  },
+  {
+    id: "completa",
+    name: "Pantalla completa (LCD + vidrio)",
+    tech: "Se cambia el módulo completo. Hace falta cuando además del vidrio hay fallas de imagen (líneas, manchas, no prende) o el equipo no admite cambiar el vidrio por separado.",
+  },
+];
+
+/** true si este modelo de iPad permite cambiar el vidrio sin tocar el LCD. */
+function isIpadSeparateGlassModel(model) {
+  return IPAD_SEPARATE_GLASS_MODELS.includes(model);
+}
+
 // Síntomas frecuentes por tipo de reparación. Se usan en el paso de "diagnóstico"
 // del buscador guiado, para que el cliente cuente qué le pasa al equipo sin
 // necesidad de saber términos técnicos. Esto llega en el mensaje de WhatsApp.
