@@ -690,6 +690,9 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   gap: 8px;
 }
 .color-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding: 8px 14px;
   border-radius: 980px;
   background: var(--bg-light);
@@ -701,6 +704,16 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 }
 .color-pill:hover { background: rgba(0, 0, 0, 0.06); }
 .color-pill.is-checked { background: var(--accent); border-color: var(--accent); color: var(--white); font-weight: 600; }
+.color-pill.is-checked .color-swatch { border-color: rgba(255, 255, 255, 0.8); }
+
+.color-swatch {
+  flex-shrink: 0;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
 
 .color-options__meta {
   display: flex;

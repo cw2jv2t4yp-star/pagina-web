@@ -224,7 +224,7 @@ function initCategoryPage(categoryKey) {
               const pills = colors
                 .map((c) => {
                   const checked = isSelected(s.id, c);
-                  return `<button class="color-pill${checked ? " is-checked" : ""}" data-select-service="${s.id}" data-select-option="${escapeHtml(c)}" aria-pressed="${checked}">${escapeHtml(c)}</button>`;
+                  return `<button class="color-pill${checked ? " is-checked" : ""}" data-select-service="${s.id}" data-select-option="${escapeHtml(c)}" aria-pressed="${checked}"><span class="color-swatch" style="background:${getColorSwatch(c)}"></span>${escapeHtml(c)}</button>`;
                 })
                 .join("");
               cards = `
@@ -572,7 +572,7 @@ function initFinder() {
           <h3 class="finder__title">¿De qué color es tu iPhone?</h3>
           <p class="finder__subtitle">Así sabemos qué vidrio trasero pedir.</p>
           <div class="finder__grid finder__grid--models">
-            ${colors.map((c) => `<button class="finder__option finder__option--compact" data-option="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
+            ${colors.map((c) => `<button class="finder__option finder__option--compact" data-option="${escapeHtml(c)}"><span class="color-swatch" style="background:${getColorSwatch(c)}"></span>${escapeHtml(c)}</button>`).join("")}
           </div>
           <p class="finder__subtitle mt-8">Precio: ${price ? price : "Consultar"} · Tiempo: A confirmar</p>`;
       } else {

@@ -231,6 +231,46 @@ function getBackGlassColors(model) {
   return IPHONE_BACK_GLASS_COLORS[model] || [];
 }
 
+// Aproximación en hex de cada color oficial, solo para mostrar un círculo de color
+// junto al nombre (no son los códigos exactos de Apple, es una referencia visual
+// para que se entienda de un vistazo aunque no se lea el texto).
+const COLOR_SWATCHES = {
+  "Blanco": "#F5F5F1",
+  "Negro": "#1C1C1E",
+  "(PRODUCT)RED": "#B0212F",
+  "Amarillo": "#F3E2A9",
+  "Verde": "#A9C6A0",
+  "Púrpura": "#D6CADD",
+  "Verde noche": "#4E5851",
+  "Gris espacial": "#55534E",
+  "Plata": "#E3E4E6",
+  "Oro": "#F0E1CF",
+  "Azul pacífico": "#3B4A5A",
+  "Medianoche": "#1E1E24",
+  "Luz estelar": "#F0E6D8",
+  "Azul": "#7C9CBF",
+  "Rosa": "#F0C7C7",
+  "Azul sierra": "#A8C4D4",
+  "Verde alpino": "#6E7C6C",
+  "Grafito": "#4A4A4C",
+  "Negro espacial": "#35322F",
+  "Púrpura oscuro": "#5C5468",
+  "Titanio negro": "#3C3C3E",
+  "Titanio blanco": "#E8E4DC",
+  "Titanio azul": "#4B5563",
+  "Titanio natural": "#8A8478",
+  "Verde azulado": "#6E8C89",
+  "Azul ultramar": "#4A5FBF",
+  "Titanio desierto": "#B7A78E",
+  "Naranja cósmico": "#D9714A",
+  "Azul profundo": "#33445E",
+};
+
+/** Color hex aproximado para el círculo junto al nombre, o gris neutro si no está mapeado. */
+function getColorSwatch(colorName) {
+  return COLOR_SWATCHES[colorName] || "#C7C7CC";
+}
+
 // Precios en dólares (USD). Todos los montos son números; el formateo
 // ("US$ 50") se hace al mostrarlos, no acá.
 //
