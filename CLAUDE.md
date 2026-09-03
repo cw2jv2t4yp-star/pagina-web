@@ -25,10 +25,12 @@ visual, no los activos de marca.
 ## Reglas de negocio acordadas con el usuario
 
 - Modelos de **iPhone, iPad y Apple Watch desde 2019 en adelante** (equivalente a
-  iPhone 11) como criterio general. **Excepción**: se agregaron modelos de iPhone
-  anteriores (8, 8 Plus, X, XS, XS Max, XR) porque el usuario había dado precios reales
-  de vidrio trasero para esos modelos. Esos precios de vidrio trasero se sacaron después
-  a pedido del usuario (ver más abajo) — los modelos se mantienen igual.
+  iPhone 11) como criterio general. Por un tiempo hubo una excepción con modelos de
+  iPhone anteriores (8, 8 Plus, X, XS, XS Max, XR) porque el usuario había dado precios
+  reales de vidrio trasero para esos modelos — esos precios se sacaron después, y
+  finalmente el usuario pidió sacar los modelos también ("son viejos, nadie tiene eso... 
+  bórralos"). Se mantiene el grupo **iPhone SE** (2ª y 3ª gen.) porque ya entra dentro
+  del criterio general (2020 y 2022, ambos ≥ 2019) — no es una excepción.
 - **Mac es otra excepción**: modelos **desde 2012 en adelante**, porque las Mac duran
   más y siguen siendo reparables.
 - **Precios en dólares (USD)**, no en pesos. El usuario pidió en algún momento evaluar

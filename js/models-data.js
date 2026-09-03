@@ -39,8 +39,6 @@ const MODEL_GROUPS = {
     { label: "iPhone SE", models: ["iPhone SE (3ª gen., 2022)", "iPhone SE (2ª gen., 2020)"] },
     { label: "iPhone 12", models: ["iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 mini"] },
     { label: "iPhone 11", models: ["iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11"] },
-    { label: "iPhone X", models: ["iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X"] },
-    { label: "iPhone 8", models: ["iPhone 8 Plus", "iPhone 8"] },
   ],
   ipad: [
     { label: "iPad Pro", models: ["iPad Pro 13\" (M4)", "iPad Pro 11\" (M4)", "iPad Pro (2018-2022, otros tamaños)"] },
