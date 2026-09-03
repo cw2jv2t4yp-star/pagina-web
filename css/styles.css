@@ -682,6 +682,34 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   padding: 0 20px 20px;
 }
 
+/* Colores de vidrio trasero: chips chicos varios por fila, no tarjetas grandes
+   como pantalla (no hay tech/pros que mostrar, solo el nombre del color). */
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.color-pill {
+  padding: 8px 14px;
+  border-radius: 980px;
+  background: var(--bg-light);
+  border: 2px solid transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--near-black);
+  transition: background .15s, border-color .15s;
+}
+.color-pill:hover { background: rgba(0, 0, 0, 0.06); }
+.color-pill.is-checked { background: var(--accent); border-color: var(--accent); color: var(--white); font-weight: 600; }
+
+.color-options__meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--gray-dark);
+  margin-top: 12px;
+}
+
 .option-card {
   position: relative;
   background: var(--bg-light);

@@ -217,18 +217,33 @@ function initCategoryPage(categoryKey) {
           const isColorService = categoryKey === "iphone" && s.id === "tapa-trasera" && getBackGlassColors(activeModel).length > 0;
           const hasOptions = (categoryKey === "iphone" && IPHONE_REPAIR_OPTIONS[s.id]) || isColorService;
           if (hasOptions) {
-            const options = isColorService
-              ? getBackGlassColors(activeModel).map((c) => ({ id: c, name: c }))
-              : getAvailableOptions(categoryKey, activeModel, s.id);
-            const flatPrice = isColorService ? getPrice(categoryKey, activeModel, s.id) : null;
-            const cards = options
-              .map((o) =>
-                renderOptionCard(o, isColorService ? flatPrice : getOptionPrice(categoryKey, activeModel, s.id, o.id), {
-                  serviceId: s.id,
-                  checked: isSelected(s.id, o.id),
+            let cards;
+            if (isColorService) {
+              const colors = getBackGlassColors(activeModel);
+              const price = formatPrice(getPrice(categoryKey, activeModel, s.id));
+              const pills = colors
+                .map((c) => {
+                  const checked = isSelected(s.id, c);
+                  return `<button class="color-pill${checked ? " is-checked" : ""}" data-select-service="${s.id}" data-select-option="${escapeHtml(c)}" aria-pressed="${checked}">${escapeHtml(c)}</button>`;
                 })
-              )
-              .join("");
+                .join("");
+              cards = `
+                <div class="color-grid">${pills}</div>
+                <div class="color-options__meta">
+                  <span>Precio: ${price ? price : "Consultar"}</span>
+                  <span>Tiempo: A confirmar</span>
+                </div>`;
+            } else {
+              const options = getAvailableOptions(categoryKey, activeModel, s.id);
+              cards = options
+                .map((o) =>
+                  renderOptionCard(o, getOptionPrice(categoryKey, activeModel, s.id, o.id), {
+                    serviceId: s.id,
+                    checked: isSelected(s.id, o.id),
+                  })
+                )
+                .join("");
+            }
             const isOpen = openOptionServices.has(s.id);
             return `
               <div class="repair-card">
@@ -548,24 +563,37 @@ function initFinder() {
     if (state.step === "option") {
       const service = SERVICES.find((s) => s.id === state.serviceId);
       const isColor = isColorService(state.category, state.serviceId);
-      const options = getStepOptions(state.category, state.model, state.serviceId);
-      const titleText = isColor ? "¿De qué color es tu iPhone?" : `¿Qué tipo de ${service.label.toLowerCase()} querés?`;
-      const subtitleText = isColor ? "Así sabemos qué vidrio trasero pedir." : "Estas son las opciones disponibles, con lo bueno y lo malo de cada una.";
-      bodyEl.innerHTML = `
-        ${backButton()}
-        <h3 class="finder__title">${titleText}</h3>
-        <p class="finder__subtitle">${subtitleText}</p>
-        <div class="finder__options-list">
-          ${options
-            .map(
-              (opt) => `
-              <button class="finder__option-card" data-option="${escapeHtml(opt.id)}">
-                ${renderOptionCard(opt, isColor ? getPrice(state.category, state.model, state.serviceId) : getOptionPrice(state.category, state.model, state.serviceId, opt.id))}
-                <span class="finder__option-card-cta">Elegir esta opción</span>
-              </button>`
-            )
-            .join("")}
-        </div>`;
+
+      if (isColor) {
+        const colors = getBackGlassColors(state.model);
+        const price = formatPrice(getPrice(state.category, state.model, state.serviceId));
+        bodyEl.innerHTML = `
+          ${backButton()}
+          <h3 class="finder__title">¿De qué color es tu iPhone?</h3>
+          <p class="finder__subtitle">Así sabemos qué vidrio trasero pedir.</p>
+          <div class="finder__grid finder__grid--models">
+            ${colors.map((c) => `<button class="finder__option finder__option--compact" data-option="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
+          </div>
+          <p class="finder__subtitle mt-8">Precio: ${price ? price : "Consultar"} · Tiempo: A confirmar</p>`;
+      } else {
+        const options = getStepOptions(state.category, state.model, state.serviceId);
+        bodyEl.innerHTML = `
+          ${backButton()}
+          <h3 class="finder__title">¿Qué tipo de ${service.label.toLowerCase()} querés?</h3>
+          <p class="finder__subtitle">Estas son las opciones disponibles, con lo bueno y lo malo de cada una.</p>
+          <div class="finder__options-list">
+            ${options
+              .map(
+                (opt) => `
+                <button class="finder__option-card" data-option="${escapeHtml(opt.id)}">
+                  ${renderOptionCard(opt, getOptionPrice(state.category, state.model, state.serviceId, opt.id))}
+                  <span class="finder__option-card-cta">Elegir esta opción</span>
+                </button>`
+              )
+              .join("")}
+          </div>`;
+      }
+
       document.getElementById("finder-back").addEventListener("click", goBack);
       bodyEl.querySelectorAll("[data-option]").forEach((btn) => {
         btn.addEventListener("click", () => {
